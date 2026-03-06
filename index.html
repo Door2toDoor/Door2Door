@@ -1,328 +1,782 @@
-import { useMemo, useState } from "react";
-
-const stores = [
-  {
-    id: "rewe",
-    name: "REWE",
-    subtitle: "Fresh groceries",
-    accent: "bg-red-500",
-    categories: [
-      { id: "offers", name: "Angebote", image: "💯", badge: "Angebot" },
-      { id: "new", name: "Neu", image: "🛍️" },
-      { id: "best", name: "REWE Beste Wahl", image: "🟥" },
-      { id: "bio", name: "REWE Bio", image: "🌿" },
-      { id: "feine", name: "REWE Feine Welt", image: "✨" },
-      { id: "fruit", name: "Obst", image: "🍎" },
-      { id: "veg", name: "Gemüse", image: "🥬" },
-      { id: "bread", name: "Gebäck & Brot", image: "🍞", badge: "Angebot" },
-      { id: "breakfast", name: "Frühstück", image: "🥣", badge: "Angebot" },
-      { id: "fresh", name: "Fix & Frisch", image: "🥪", badge: "Angebot" },
-      { id: "milk", name: "Eier & Milch", image: "🥚", badge: "Angebot" },
-      { id: "yogurt", name: "Joghurts", image: "🥛" },
-      { id: "drinks", name: "Getränke", image: "🥤", badge: "Angebot" },
-      { id: "cheese", name: "Käse", image: "🧀", badge: "Angebot" },
-      { id: "meat", name: "Frisches Fleisch", image: "🥩" },
-      { id: "vegan", name: "Pflanzliche Produkte", image: "🌱" },
-      { id: "rice", name: "Nudeln & Reis", image: "🍚" },
-      { id: "spices", name: "Gewürze & Saucen", image: "🫙" },
-      { id: "cans", name: "Konserven & Backen", image: "🥫" },
-      { id: "frozen", name: "Gefrierfach", image: "🧊", badge: "Angebot" },
-      { id: "ice", name: "Speiseeis", image: "🍦" },
-      { id: "snacks", name: "Chips, Nüsse & Flips", image: "🥔", badge: "Angebot" },
-      { id: "cookies", name: "Cookies & Schokolade", image: "🍫", badge: "Angebot" },
-      { id: "coffee", name: "Kaffee & Tee", image: "☕", badge: "Angebot" },
-      { id: "household", name: "Haushalt", image: "🧻", badge: "Angebot" },
-      { id: "baby", name: "Baby", image: "🍼", badge: "Angebot" },
-    ],
-  },
-  {
-    id: "lidl",
-    name: "Lidl",
-    subtitle: "Daily essentials",
-    accent: "bg-blue-600",
-    categories: [
-      { id: "offers", name: "Offers", image: "💯", badge: "Sale" },
-      { id: "drinks", name: "Drinks", image: "🥤" },
-      { id: "fruit", name: "Fruit", image: "🍌" },
-      { id: "veg", name: "Vegetables", image: "🥒" },
-      { id: "bread", name: "Bread", image: "🥖" },
-      { id: "milk", name: "Milk & Eggs", image: "🥚" },
-      { id: "rice", name: "Rice & Pasta", image: "🍚" },
-      { id: "snacks", name: "Snacks", image: "🍪" },
-    ],
-  },
-  {
-    id: "netto",
-    name: "Netto",
-    subtitle: "Fast shopping",
-    accent: "bg-yellow-400",
-    categories: [
-      { id: "offers", name: "Angebote", image: "💯", badge: "Sale" },
-      { id: "drinks", name: "Getränke", image: "🥤" },
-      { id: "milk", name: "Milchprodukte", image: "🥛" },
-      { id: "veg", name: "Gemüse", image: "🍅" },
-      { id: "bread", name: "Brot", image: "🍞" },
-      { id: "snacks", name: "Snacks", image: "🍫" },
-    ],
-  },
-  {
-    id: "atlantic",
-    name: "Atlantic Arabic Market",
-    subtitle: "Arabic groceries",
-    accent: "bg-orange-500",
-    categories: [
-      { id: "bread", name: "خبز ومعجنات", image: "🫓" },
-      { id: "dairy", name: "ألبان وأجبان", image: "🧀" },
-      { id: "rice", name: "رز وبرغل", image: "🍚" },
-      { id: "spices", name: "بهارات", image: "🫙" },
-      { id: "frozen", name: "مجمّدات", image: "🧊" },
-      { id: "drinks", name: "مشروبات", image: "🥤" },
-      { id: "snacks", name: "سناكات", image: "🍫" },
-      { id: "household", name: "منزلية", image: "🧻" },
-    ],
-  },
-  {
-    id: "bosra",
-    name: "Bosra Market",
-    subtitle: "Arabic & Syrian food",
-    accent: "bg-emerald-500",
-    categories: [
-      { id: "ready", name: "أكل جاهز", image: "🧆" },
-      { id: "bread", name: "خبز", image: "🥖" },
-      { id: "dairy", name: "ألبان", image: "🥛" },
-      { id: "rice", name: "حبوب ورز", image: "🍚" },
-      { id: "frozen", name: "مجمّدات", image: "🧊" },
-      { id: "drinks", name: "مشروبات", image: "🥤" },
-      { id: "snacks", name: "سناكات", image: "🍪" },
-    ],
-  },
-];
-
-const sampleProducts = {
-  drinks: [
-    { id: 1, name: "Coca-Cola 1L", price: 2.49, image: "🥤" },
-    { id: 2, name: "Water 1.5L", price: 0.99, image: "💧" },
-    { id: 3, name: "Orange Juice", price: 2.79, image: "🧃" },
-  ],
-  fruit: [
-    { id: 4, name: "Bananas", price: 1.99, image: "🍌" },
-    { id: 5, name: "Apples", price: 2.29, image: "🍎" },
-  ],
-  veg: [
-    { id: 6, name: "Tomatoes", price: 2.19, image: "🍅" },
-    { id: 7, name: "Cucumbers", price: 1.29, image: "🥒" },
-  ],
-  bread: [
-    { id: 8, name: "Arabic Bread", price: 2.50, image: "🥖" },
-    { id: 9, name: "Toast Bread", price: 1.49, image: "🍞" },
-  ],
-  milk: [
-    { id: 10, name: "Milk 1L", price: 1.35, image: "🥛" },
-    { id: 11, name: "Eggs 10 pcs", price: 2.99, image: "🥚" },
-  ],
-  rice: [
-    { id: 12, name: "Basmati Rice", price: 6.90, image: "🍚" },
-    { id: 13, name: "Pasta", price: 1.49, image: "🍝" },
-  ],
-  snacks: [
-    { id: 14, name: "Chocolate", price: 1.90, image: "🍫" },
-    { id: 15, name: "Cookies", price: 2.20, image: "🍪" },
-  ],
-  offers: [
-    { id: 16, name: "Weekly Deal", price: 3.99, image: "💥" },
-  ],
-  dairy: [
-    { id: 17, name: "Labneh", price: 3.20, image: "🥛" },
-    { id: 18, name: "Cheese", price: 3.99, image: "🧀" },
-  ],
-  spices: [
-    { id: 19, name: "Mixed Spices", price: 2.99, image: "🫙" },
-  ],
-  frozen: [
-    { id: 20, name: "Frozen Kibbeh", price: 7.50, image: "🧊" },
-  ],
-  household: [
-    { id: 21, name: "Paper Towels", price: 2.79, image: "🧻" },
-  ],
-  ready: [
-    { id: 22, name: "Falafel Box", price: 6.90, image: "🧆" },
-  ],
-  new: [{ id: 23, name: "New Product", price: 4.20, image: "🛍️" }],
-  best: [{ id: 24, name: "Best Choice", price: 3.50, image: "⭐" }],
-  bio: [{ id: 25, name: "Organic Product", price: 4.10, image: "🌿" }],
-  feine: [{ id: 26, name: "Premium Product", price: 5.90, image: "✨" }],
-  cheese: [{ id: 27, name: "Cheese Selection", price: 4.90, image: "🧀" }],
-  meat: [{ id: 28, name: "Fresh Meat", price: 8.90, image: "🥩" }],
-  vegan: [{ id: 29, name: "Vegan Burger", price: 4.40, image: "🌱" }],
-  cans: [{ id: 30, name: "Tomato Sauce", price: 1.80, image: "🥫" }],
-  ice: [{ id: 31, name: "Ice Cream", price: 3.20, image: "🍦" }],
-  coffee: [{ id: 32, name: "Coffee Beans", price: 5.99, image: "☕" }],
-  yogurt: [{ id: 33, name: "Yogurt", price: 1.20, image: "🥣" }],
-  breakfast: [{ id: 34, name: "Cereal", price: 2.80, image: "🥣" }],
-  fresh: [{ id: 35, name: "Fresh Sandwich", price: 3.90, image: "🥪" }],
-};
-
-function CategoryCard({ category, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="rounded-[28px] bg-[#2b2b2b] p-4 text-left shadow-xl transition hover:-translate-y-0.5"
-    >
-      <div className="rounded-[22px] bg-[#f2efe9] flex items-center justify-center h-40 text-6xl shadow-inner">
-        {category.image}
-      </div>
-      <div className="mt-4 min-h-[64px] text-2xl font-medium leading-tight text-white">
-        {category.name}
-      </div>
-      {category.badge ? (
-        <div className="mt-2 inline-flex rounded-xl bg-[#f2d247] px-3 py-1 text-base font-semibold text-black">
-          {category.badge}
-        </div>
-      ) : null}
-    </button>
-  );
-}
-
-function ProductCard({ product, onAdd }) {
-  return (
-    <div className="rounded-[24px] bg-[#2b2b2b] p-4 shadow-xl">
-      <div className="rounded-[18px] bg-[#f2efe9] flex items-center justify-center h-32 text-5xl">
-        {product.image}
-      </div>
-      <div className="mt-3 text-xl font-medium text-white">{product.name}</div>
-      <div className="mt-1 text-lg font-semibold text-[#f2d247]">€{product.price.toFixed(2)}</div>
-      <button
-        onClick={onAdd}
-        className="mt-4 w-full rounded-2xl bg-[#f36c21] px-4 py-3 text-lg font-semibold text-white"
-      >
-        Add to cart
-      </button>
-    </div>
-  );
-}
-
-export default function Door2DoorLieferandoStyle() {
-  const [activeStoreId, setActiveStoreId] = useState("rewe");
-  const [activeCategoryId, setActiveCategoryId] = useState(null);
-  const [search, setSearch] = useState("");
-  const [cart, setCart] = useState([]);
-
-  const activeStore = stores.find((s) => s.id === activeStoreId) || stores[0];
-
-  const shownCategories = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return activeStore.categories;
-    return activeStore.categories.filter((c) => c.name.toLowerCase().includes(q));
-  }, [activeStore, search]);
-
-  const shownProducts = useMemo(() => {
-    if (!activeCategoryId) return [];
-    const items = sampleProducts[activeCategoryId] || [];
-    const q = search.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((p) => p.name.toLowerCase().includes(q));
-  }, [activeCategoryId, search]);
-
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((p) => p.id === product.id);
-      if (existing) {
-        return prev.map((p) => (p.id === product.id ? { ...p, qty: p.qty + 1 } : p));
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Door2Door</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #171717;
+      color: #fff;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 16px 110px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky;
+      top: 0;
+      background: #171717;
+      z-index: 10;
+    }
+    .back-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: #232323;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .search-wrap input {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      background: #2b2b2b;
+      color: #fff;
+      padding: 18px 20px 18px 58px;
+      font-size: 24px;
+      outline: none;
+    }
+    .search-wrap .icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 28px;
+      color: #e6902f;
+    }
+    .store-tabs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 16px 0 6px;
+      scrollbar-width: none;
+    }
+    .store-tabs::-webkit-scrollbar { display: none; }
+    .store-tab {
+      white-space: nowrap;
+      border: none;
+      border-radius: 18px;
+      background: #2b2b2b;
+      color: #fff;
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .store-tab.active {
+      background: #fff;
+      color: #111;
+    }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      padding: 10px 0 6px;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 38px;
+    }
+    .hero p {
+      margin: 6px 0 0;
+      color: rgba(255,255,255,.7);
+      font-size: 18px;
+    }
+    .hero-badge {
+      background: #f36c21;
+      color: white;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-weight: 700;
+      display: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .card {
+      border: none;
+      border-radius: 28px;
+      background: #2b2b2b;
+      color: #fff;
+      padding: 14px;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(0,0,0,.2);
+    }
+    .img-box {
+      height: 160px;
+      border-radius: 22px;
+      background: #f2efe9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,.06);
+    }
+    .card-title {
+      margin-top: 14px;
+      min-height: 58px;
+      font-size: 22px;
+      line-height: 1.18;
+    }
+    .pill {
+      display: inline-block;
+      margin-top: 8px;
+      background: #f2d247;
+      color: #111;
+      border-radius: 12px;
+      padding: 6px 10px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .back-categories {
+      display: inline-block;
+      margin: 18px 0 4px;
+      background: #2b2b2b;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .product-card .img-box {
+      height: 135px;
+      font-size: 54px;
+    }
+    .product-price {
+      margin-top: 8px;
+      color: #f2d247;
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .add-btn {
+      margin-top: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      background: #f36c21;
+      color: #fff;
+      padding: 13px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cart-bar {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      background: #f36c21;
+      color: #fff;
+      border-radius: 26px;
+      padding: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.35);
+      z-index: 20;
+    }
+    .cart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .cart-head small { color: rgba(255,255,255,.82); }
+    .continue-btn {
+      margin-top: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      background: #fff;
+      color: #f36c21;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .drawer {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display: none;
+      align-items: end;
+      justify-content: center;
+      z-index: 30;
+    }
+    .drawer.show { display: flex; }
+    .drawer-panel {
+      width: min(720px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: #fff;
+      color: #111;
+      border-radius: 28px 28px 0 0;
+      padding: 18px;
+    }
+    .drawer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .close-btn {
+      border: none;
+      background: #f2f2f2;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .cart-item {
+      border: 1px solid #eee;
+      border-radius: 18px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .qty button {
+      border: none;
+      background: #2b2b2b;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .form input, .form textarea {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+    .form textarea { min-height: 90px; resize: vertical; }
+    .tip-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tip-grid button {
+      border: none;
+      background: #f2f2f2;
+      border-radius: 14px;
+      padding: 12px 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tip-grid button.active {
+      background: #f36c21;
+      color: #fff;
+    }
+    .summary {
+      border-radius: 18px;
+      background: #f7f7f7;
+      padding: 14px;
+      margin-top: 8px;
+    }
+    .summary div {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .summary div:last-child {
+      margin-bottom: 0;
+      padding-top: 8px;
+      border-top: 1px solid #ddd;
+      font-weight: 800;
+    }
+    .wa-btn {
+      margin-top: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      background: #25D366;
+      color: #fff;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    @media (min-width: 900px) {
+      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero-badge { display: block; }
+      .cart-bar {
+        left: auto;
+        right: 20px;
+        width: 380px;
       }
-      return [...prev, { ...product, qty: 1 }];
-    });
-  };
-
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-  return (
-    <div className="min-h-screen bg-[#171717] text-white">
-      <div className="mx-auto max-w-7xl px-4 py-5">
-        <div className="flex items-center gap-4 rounded-b-[28px] border-b border-white/10 pb-4">
-          <button className="flex h-16 w-16 items-center justify-center rounded-full bg-[#232323] text-3xl shadow-lg">
-            ←
-          </button>
-          <div className="relative flex-1">
-            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-3xl text-[#e6902f]">⌕</span>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Nach einem Artikel suchen"
-              className="w-full rounded-full bg-[#2b2b2b] py-5 pl-16 pr-5 text-2xl outline-none placeholder:text-[#b9b9b9]"
-            />
-          </div>
-        </div>
-
-        <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
-          {stores.map((store) => (
-            <button
-              key={store.id}
-              onClick={() => {
-                setActiveStoreId(store.id);
-                setActiveCategoryId(null);
-              }}
-              className={`whitespace-nowrap rounded-2xl px-4 py-3 text-lg font-semibold shadow-lg ${
-                activeStoreId === store.id ? "bg-white text-black" : "bg-[#2b2b2b] text-white"
-              }`}
-            >
-              {store.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-5 flex items-center justify-between">
-          <div>
-            <div className="text-4xl font-bold">{activeStore.name}</div>
-            <div className="mt-1 text-lg text-white/70">{activeStore.subtitle}</div>
-          </div>
-          <div className={`hidden rounded-2xl px-4 py-3 text-lg font-bold md:block ${activeStore.accent}`}>
-            {cart.reduce((sum, i) => sum + i.qty, 0)} items · €{total.toFixed(2)}
-          </div>
-        </div>
-
-        {!activeCategoryId ? (
-          <div className="mt-6 grid grid-cols-2 gap-5 md:grid-cols-3">
-            {shownCategories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                onClick={() => setActiveCategoryId(category.id)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-6">
-            <button
-              onClick={() => setActiveCategoryId(null)}
-              className="mb-5 rounded-2xl bg-[#2b2b2b] px-4 py-3 text-lg font-semibold"
-            >
-              ← Back to categories
-            </button>
-            <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
-              {shownProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAdd={() => addToCart(product)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="fixed bottom-5 left-1/2 z-20 w-[calc(100%-32px)] max-w-xl -translate-x-1/2 rounded-[26px] bg-[#f36c21] p-4 shadow-2xl md:right-5 md:left-auto md:w-[380px] md:translate-x-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-lg font-semibold">Cart</div>
-              <div className="text-sm text-white/80">{cart.length ? `${cart.reduce((s,i)=>s+i.qty,0)} items selected` : "No items yet"}</div>
-            </div>
-            <div className="text-2xl font-bold">€{total.toFixed(2)}</div>
-          </div>
-          <button className="mt-3 w-full rounded-2xl bg-white px-4 py-3 text-lg font-bold text-[#f36c21]">
-            Continue order
-          </button>
-        </div>
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <button class="back-btn">←</button>
+      <div class="search-wrap">
+        <span class="icon">⌕</span>
+        <input id="searchInput" placeholder="Nach einem Artikel suchen" />
       </div>
     </div>
-  );
-}
+
+    <div id="storeTabs" class="store-tabs"></div>
+
+    <div class="hero">
+      <div>
+        <h1 id="storeTitle"></h1>
+        <p id="storeSubtitle"></p>
+      </div>
+      <div class="hero-badge" id="heroBadge"></div>
+    </div>
+
+    <button id="backToCategories" class="back-categories" style="display:none;">← Back to categories</button>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <div class="cart-bar">
+    <div class="cart-head">
+      <div>
+        <div style="font-size:18px;font-weight:800;">Cart</div>
+        <small id="cartMeta">No items yet</small>
+      </div>
+      <div id="cartTotal" style="font-size:28px;font-weight:800;">€0.00</div>
+    </div>
+    <button id="continueBtn" class="continue-btn">Continue order</button>
+  </div>
+
+  <div id="drawer" class="drawer">
+    <div class="drawer-panel">
+      <div class="drawer-top">
+        <div>
+          <div style="font-size:24px;font-weight:800;">Your order</div>
+          <div style="color:#666;">Regensburg only</div>
+        </div>
+        <button id="closeDrawer" class="close-btn">×</button>
+      </div>
+
+      <div id="cartItems"></div>
+
+      <div class="form">
+        <input id="customerName" placeholder="Name" />
+        <input id="customerPhone" placeholder="Phone number" />
+        <input id="customerStreet" placeholder="Street + number" />
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <input id="customerFloor" placeholder="Floor" />
+          <input id="customerApartment" placeholder="Apartment" />
+        </div>
+        <textarea id="customerNote" placeholder="Note"></textarea>
+      </div>
+
+      <div style="font-weight:700;margin-bottom:8px;">Tip for driver</div>
+      <div id="tipGrid" class="tip-grid"></div>
+
+      <div class="summary">
+        <div><span>Items</span><span id="sumItems">€0.00</span></div>
+        <div><span>Delivery</span><span id="sumDelivery">€2.50</span></div>
+        <div><span>Tip</span><span id="sumTip">€0.00</span></div>
+        <div><span>Total</span><span id="sumTotal">€0.00</span></div>
+      </div>
+
+      <button id="waBtn" class="wa-btn">Send via WhatsApp</button>
+      <div style="margin-top:10px;color:#666;font-size:13px;text-align:center;">Minimum order €10.00</div>
+    </div>
+  </div>
+
+  <script>
+    const DELIVERY_FEE = 2.5;
+    const MIN_ORDER = 10;
+    const PHONE = '4917672105595';
+
+    const stores = [
+      { id: 'rewe', name: 'REWE', subtitle: 'Fresh groceries', categories: [
+        { id: 'offers', name: 'Angebote', image: '💯', badge: 'Angebot' },
+        { id: 'new', name: 'Neu', image: '🛍️' },
+        { id: 'best', name: 'REWE Beste Wahl', image: '🟥' },
+        { id: 'bio', name: 'REWE Bio', image: '🌿' },
+        { id: 'feine', name: 'REWE Feine Welt', image: '✨' },
+        { id: 'fruit', name: 'Obst', image: '🍎' },
+        { id: 'veg', name: 'Gemüse', image: '🥬' },
+        { id: 'bread', name: 'Gebäck & Brot', image: '🍞', badge: 'Angebot' },
+        { id: 'breakfast', name: 'Frühstück', image: '🥣', badge: 'Angebot' },
+        { id: 'fresh', name: 'Fix & Frisch', image: '🥪', badge: 'Angebot' },
+        { id: 'milk', name: 'Eier & Milch', image: '🥚', badge: 'Angebot' },
+        { id: 'yogurt', name: 'Joghurts', image: '🥛' },
+        { id: 'drinks', name: 'Getränke', image: '🥤', badge: 'Angebot' },
+        { id: 'cheese', name: 'Käse', image: '🧀', badge: 'Angebot' },
+        { id: 'meat', name: 'Frisches Fleisch', image: '🥩' },
+        { id: 'vegan', name: 'Pflanzliche Produkte', image: '🌱' },
+        { id: 'rice', name: 'Nudeln & Reis', image: '🍚' },
+        { id: 'spices', name: 'Gewürze & Saucen', image: '🫙' },
+        { id: 'cans', name: 'Konserven & Backen', image: '🥫' },
+        { id: 'frozen', name: 'Gefrierfach', image: '🧊', badge: 'Angebot' },
+        { id: 'ice', name: 'Speiseeis', image: '🍦' },
+        { id: 'snacks', name: 'Chips, Nüsse & Flips', image: '🥔', badge: 'Angebot' },
+        { id: 'cookies', name: 'Cookies & Schokolade', image: '🍫', badge: 'Angebot' },
+        { id: 'coffee', name: 'Kaffee & Tee', image: '☕', badge: 'Angebot' },
+        { id: 'household', name: 'Haushalt', image: '🧻', badge: 'Angebot' },
+        { id: 'baby', name: 'Baby', image: '🍼', badge: 'Angebot' },
+      ]},
+      { id: 'lidl', name: 'Lidl', subtitle: 'Daily essentials', categories: [
+        { id: 'offers', name: 'Offers', image: '💯', badge: 'Sale' },
+        { id: 'drinks', name: 'Drinks', image: '🥤' },
+        { id: 'fruit', name: 'Fruit', image: '🍌' },
+        { id: 'veg', name: 'Vegetables', image: '🥒' },
+        { id: 'bread', name: 'Bread', image: '🥖' },
+        { id: 'milk', name: 'Milk & Eggs', image: '🥚' },
+        { id: 'rice', name: 'Rice & Pasta', image: '🍚' },
+        { id: 'snacks', name: 'Snacks', image: '🍪' },
+      ]},
+      { id: 'netto', name: 'Netto', subtitle: 'Fast shopping', categories: [
+        { id: 'offers', name: 'Angebote', image: '💯', badge: 'Sale' },
+        { id: 'drinks', name: 'Getränke', image: '🥤' },
+        { id: 'milk', name: 'Milchprodukte', image: '🥛' },
+        { id: 'veg', name: 'Gemüse', image: '🍅' },
+        { id: 'bread', name: 'Brot', image: '🍞' },
+        { id: 'snacks', name: 'Snacks', image: '🍫' },
+      ]},
+      { id: 'atlantic', name: 'Atlantic Arabic Market', subtitle: 'Arabic groceries', categories: [
+        { id: 'bread', name: 'خبز ومعجنات', image: '🫓' },
+        { id: 'dairy', name: 'ألبان وأجبان', image: '🧀' },
+        { id: 'rice', name: 'رز وبرغل', image: '🍚' },
+        { id: 'spices', name: 'بهارات', image: '🫙' },
+        { id: 'frozen', name: 'مجمّدات', image: '🧊' },
+        { id: 'drinks', name: 'مشروبات', image: '🥤' },
+        { id: 'snacks', name: 'سناكات', image: '🍫' },
+        { id: 'household', name: 'منزلية', image: '🧻' },
+      ]},
+      { id: 'bosra', name: 'Bosra Market', subtitle: 'Arabic & Syrian food', categories: [
+        { id: 'ready', name: 'أكل جاهز', image: '🧆' },
+        { id: 'bread', name: 'خبز', image: '🥖' },
+        { id: 'dairy', name: 'ألبان', image: '🥛' },
+        { id: 'rice', name: 'حبوب ورز', image: '🍚' },
+        { id: 'frozen', name: 'مجمّدات', image: '🧊' },
+        { id: 'drinks', name: 'مشروبات', image: '🥤' },
+        { id: 'snacks', name: 'سناكات', image: '🍪' },
+      ]},
+    ];
+
+    const sampleProducts = {
+      drinks: [
+        { id: 1, name: 'Coca-Cola 1L', price: 2.49, image: '🥤' },
+        { id: 2, name: 'Water 1.5L', price: 0.99, image: '💧' },
+        { id: 3, name: 'Orange Juice', price: 2.79, image: '🧃' },
+      ],
+      fruit: [
+        { id: 4, name: 'Bananas', price: 1.99, image: '🍌' },
+        { id: 5, name: 'Apples', price: 2.29, image: '🍎' },
+      ],
+      veg: [
+        { id: 6, name: 'Tomatoes', price: 2.19, image: '🍅' },
+        { id: 7, name: 'Cucumbers', price: 1.29, image: '🥒' },
+      ],
+      bread: [
+        { id: 8, name: 'Arabic Bread', price: 2.5, image: '🥖' },
+        { id: 9, name: 'Toast Bread', price: 1.49, image: '🍞' },
+      ],
+      milk: [
+        { id: 10, name: 'Milk 1L', price: 1.35, image: '🥛' },
+        { id: 11, name: 'Eggs 10 pcs', price: 2.99, image: '🥚' },
+      ],
+      rice: [
+        { id: 12, name: 'Basmati Rice', price: 6.9, image: '🍚' },
+        { id: 13, name: 'Pasta', price: 1.49, image: '🍝' },
+      ],
+      snacks: [
+        { id: 14, name: 'Chocolate', price: 1.9, image: '🍫' },
+        { id: 15, name: 'Cookies', price: 2.2, image: '🍪' },
+      ],
+      offers: [{ id: 16, name: 'Weekly Deal', price: 3.99, image: '💥' }],
+      dairy: [{ id: 17, name: 'Labneh', price: 3.2, image: '🥛' }, { id: 18, name: 'Cheese', price: 3.99, image: '🧀' }],
+      spices: [{ id: 19, name: 'Mixed Spices', price: 2.99, image: '🫙' }],
+      frozen: [{ id: 20, name: 'Frozen Kibbeh', price: 7.5, image: '🧊' }],
+      household: [{ id: 21, name: 'Paper Towels', price: 2.79, image: '🧻' }],
+      ready: [{ id: 22, name: 'Falafel Box', price: 6.9, image: '🧆' }],
+      new: [{ id: 23, name: 'New Product', price: 4.2, image: '🛍️' }],
+      best: [{ id: 24, name: 'Best Choice', price: 3.5, image: '⭐' }],
+      bio: [{ id: 25, name: 'Organic Product', price: 4.1, image: '🌿' }],
+      feine: [{ id: 26, name: 'Premium Product', price: 5.9, image: '✨' }],
+      cheese: [{ id: 27, name: 'Cheese Selection', price: 4.9, image: '🧀' }],
+      meat: [{ id: 28, name: 'Fresh Meat', price: 8.9, image: '🥩' }],
+      vegan: [{ id: 29, name: 'Vegan Burger', price: 4.4, image: '🌱' }],
+      cans: [{ id: 30, name: 'Tomato Sauce', price: 1.8, image: '🥫' }],
+      ice: [{ id: 31, name: 'Ice Cream', price: 3.2, image: '🍦' }],
+      coffee: [{ id: 32, name: 'Coffee Beans', price: 5.99, image: '☕' }],
+      yogurt: [{ id: 33, name: 'Yogurt', price: 1.2, image: '🥣' }],
+      breakfast: [{ id: 34, name: 'Cereal', price: 2.8, image: '🥣' }],
+      fresh: [{ id: 35, name: 'Fresh Sandwich', price: 3.9, image: '🥪' }],
+    };
+
+    let activeStoreId = 'rewe';
+    let activeCategoryId = null;
+    let search = '';
+    let cart = [];
+    let tip = 0;
+
+    const storeTabs = document.getElementById('storeTabs');
+    const storeTitle = document.getElementById('storeTitle');
+    const storeSubtitle = document.getElementById('storeSubtitle');
+    const heroBadge = document.getElementById('heroBadge');
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('searchInput');
+    const backToCategories = document.getElementById('backToCategories');
+    const cartMeta = document.getElementById('cartMeta');
+    const cartTotal = document.getElementById('cartTotal');
+    const continueBtn = document.getElementById('continueBtn');
+    const drawer = document.getElementById('drawer');
+    const closeDrawer = document.getElementById('closeDrawer');
+    const cartItems = document.getElementById('cartItems');
+    const tipGrid = document.getElementById('tipGrid');
+    const sumItems = document.getElementById('sumItems');
+    const sumDelivery = document.getElementById('sumDelivery');
+    const sumTip = document.getElementById('sumTip');
+    const sumTotal = document.getElementById('sumTotal');
+    const waBtn = document.getElementById('waBtn');
+
+    function getActiveStore() {
+      return stores.find(s => s.id === activeStoreId) || stores[0];
+    }
+
+    function getFilteredCategories() {
+      const q = search.trim().toLowerCase();
+      const categories = getActiveStore().categories;
+      if (!q) return categories;
+      return categories.filter(c => c.name.toLowerCase().includes(q));
+    }
+
+    function getFilteredProducts() {
+      if (!activeCategoryId) return [];
+      const q = search.trim().toLowerCase();
+      const items = sampleProducts[activeCategoryId] || [];
+      if (!q) return items;
+      return items.filter(p => p.name.toLowerCase().includes(q));
+    }
+
+    function renderStoreTabs() {
+      storeTabs.innerHTML = stores.map(store => `
+        <button class="store-tab ${store.id === activeStoreId ? 'active' : ''}" data-store="${store.id}">${store.name}</button>
+      `).join('');
+      storeTabs.querySelectorAll('.store-tab').forEach(btn => {
+        btn.onclick = () => {
+          activeStoreId = btn.dataset.store;
+          activeCategoryId = null;
+          render();
+        };
+      });
+    }
+
+    function renderHero() {
+      const s = getActiveStore();
+      storeTitle.textContent = s.name;
+      storeSubtitle.textContent = s.subtitle;
+      const count = cart.reduce((sum, i) => sum + i.qty, 0);
+      heroBadge.textContent = `${count} items · €${getCartSubtotal().toFixed(2)}`;
+    }
+
+    function renderGrid() {
+      if (!activeCategoryId) {
+        backToCategories.style.display = 'none';
+        const categories = getFilteredCategories();
+        grid.innerHTML = categories.map(category => `
+          <button class="card" data-category="${category.id}">
+            <div class="img-box">${category.image}</div>
+            <div class="card-title">${category.name}</div>
+            ${category.badge ? `<div class="pill">${category.badge}</div>` : ''}
+          </button>
+        `).join('');
+        grid.querySelectorAll('.card').forEach(card => {
+          card.onclick = () => {
+            activeCategoryId = card.dataset.category;
+            render();
+          };
+        });
+      } else {
+        backToCategories.style.display = 'inline-block';
+        const products = getFilteredProducts();
+        grid.innerHTML = products.map(product => `
+          <div class="card product-card">
+            <div class="img-box">${product.image}</div>
+            <div class="card-title">${product.name}</div>
+            <div class="product-price">€${product.price.toFixed(2)}</div>
+            <button class="add-btn" data-add="${product.id}">Add to cart</button>
+          </div>
+        `).join('');
+        grid.querySelectorAll('[data-add]').forEach(btn => {
+          btn.onclick = () => {
+            const id = Number(btn.dataset.add);
+            const product = products.find(p => p.id === id);
+            addToCart(product);
+          };
+        });
+      }
+    }
+
+    function addToCart(product) {
+      if (!product) return;
+      const existing = cart.find(p => p.id === product.id);
+      if (existing) existing.qty += 1;
+      else cart.push({ ...product, qty: 1 });
+      renderCartBar();
+      renderDrawer();
+      renderHero();
+    }
+
+    function updateQty(id, delta) {
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+      renderCartBar();
+      renderDrawer();
+      renderHero();
+    }
+
+    function getCartSubtotal() {
+      return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    }
+
+    function renderCartBar() {
+      const qty = cart.reduce((sum, i) => sum + i.qty, 0);
+      const subtotal = getCartSubtotal();
+      cartMeta.textContent = qty ? `${qty} items selected` : 'No items yet';
+      cartTotal.textContent = `€${subtotal.toFixed(2)}`;
+    }
+
+    function renderDrawer() {
+      cartItems.innerHTML = cart.length ? cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-row">
+            <div>
+              <div style="font-weight:700;">${item.name}</div>
+              <div style="color:#666;font-size:14px;">€${item.price.toFixed(2)}</div>
+            </div>
+            <div class="qty">
+              <button data-minus="${item.id}">-</button>
+              <strong>${item.qty}</strong>
+              <button data-plus="${item.id}">+</button>
+            </div>
+          </div>
+        </div>
+      `).join('') : '<div style="color:#666;margin-bottom:10px;">Your cart is empty.</div>';
+
+      cartItems.querySelectorAll('[data-minus]').forEach(btn => btn.onclick = () => updateQty(Number(btn.dataset.minus), -1));
+      cartItems.querySelectorAll('[data-plus]').forEach(btn => btn.onclick = () => updateQty(Number(btn.dataset.plus), 1));
+
+      tipGrid.innerHTML = [0,1,2,3,5].map(t => `
+        <button class="${tip === t ? 'active' : ''}" data-tip="${t}">€${t}</button>
+      `).join('');
+      tipGrid.querySelectorAll('[data-tip]').forEach(btn => btn.onclick = () => {
+        tip = Number(btn.dataset.tip);
+        renderDrawer();
+      });
+
+      const subtotal = getCartSubtotal();
+      const total = subtotal + DELIVERY_FEE + tip;
+      sumItems.textContent = `€${subtotal.toFixed(2)}`;
+      sumDelivery.textContent = `€${DELIVERY_FEE.toFixed(2)}`;
+      sumTip.textContent = `€${tip.toFixed(2)}`;
+      sumTotal.textContent = `€${total.toFixed(2)}`;
+    }
+
+    function openDrawer() { drawer.classList.add('show'); renderDrawer(); }
+    function closeTheDrawer() { drawer.classList.remove('show'); }
+
+    function sendWhatsAppOrder() {
+      const subtotal = getCartSubtotal();
+      if (subtotal < MIN_ORDER) {
+        alert(`Minimum order is €${MIN_ORDER.toFixed(2)}`);
+        return;
+      }
+      const name = document.getElementById('customerName').value.trim();
+      const phone = document.getElementById('customerPhone').value.trim();
+      const street = document.getElementById('customerStreet').value.trim();
+      const floor = document.getElementById('customerFloor').value.trim();
+      const apartment = document.getElementById('customerApartment').value.trim();
+      const note = document.getElementById('customerNote').value.trim();
+      const lines = cart.map(i => `- ${i.name} x${i.qty} = €${(i.price * i.qty).toFixed(2)}`);
+      const total = subtotal + DELIVERY_FEE + tip;
+      const message = [
+        'New Door2Door Order',
+        '',
+        `Store: ${getActiveStore().name}`,
+        `Name: ${name || '-'}`,
+        `Phone: ${phone || '-'}`,
+        `Street: ${street || '-'}`,
+        `Floor: ${floor || '-'}`,
+        `Apartment: ${apartment || '-'}`,
+        '',
+        'Items:',
+        ...lines,
+        '',
+        `Items total: €${subtotal.toFixed(2)}`,
+        `Delivery: €${DELIVERY_FEE.toFixed(2)}`,
+        `Tip: €${tip.toFixed(2)}`,
+        `Final total: €${total.toFixed(2)}`,
+        `Note: ${note || '-'}`,
+        '',
+        'Regensburg only',
+      ].join('\n');
+      window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    function render() {
+      renderStoreTabs();
+      renderHero();
+      renderGrid();
+      renderCartBar();
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      search = e.target.value;
+      renderGrid();
+    });
+    backToCategories.onclick = () => {
+      activeCategoryId = null;
+      render();
+    };
+    continueBtn.onclick = openDrawer;
+    closeDrawer.onclick = closeTheDrawer;
+    drawer.addEventListener('click', (e) => {
+      if (e.target === drawer) closeTheDrawer();
+    });
+    waBtn.onclick = sendWhatsAppOrder;
+
+    render();
+  </script>
+</body>
+</html>
