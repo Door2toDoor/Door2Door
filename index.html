@@ -20,269 +20,46 @@ const CATEGORIES = [
   "Ready Food",
 ];
 
+const DELIVERY_FEE = 2.5;
+const MIN_ORDER = 10;
+
 const PRODUCTS = [
-  {
-    id: 1,
-    store: "Atlantic Arabic Market",
-    category: "Bread",
-    name: "Arabic Bread",
-    nameAr: "خبز عربي",
-    price: 2.5,
-    emoji: "🥖",
-  },
-  {
-    id: 2,
-    store: "Atlantic Arabic Market",
-    category: "Dairy",
-    name: "Labneh",
-    nameAr: "لبنة",
-    price: 3.2,
-    emoji: "🥛",
-  },
-  {
-    id: 3,
-    store: "Atlantic Arabic Market",
-    category: "Rice & Grains",
-    name: "Basmati Rice",
-    nameAr: "رز بسمتي",
-    price: 6.9,
-    emoji: "🍚",
-  },
-  {
-    id: 4,
-    store: "Atlantic Arabic Market",
-    category: "Snacks",
-    name: "Tahini",
-    nameAr: "طحينة",
-    price: 4.1,
-    emoji: "🥣",
-  },
-  {
-    id: 5,
-    store: "Bosra Market",
-    category: "Bread",
-    name: "Saj Bread",
-    nameAr: "خبز صاج",
-    price: 2.8,
-    emoji: "🫓",
-  },
-  {
-    id: 6,
-    store: "Bosra Market",
-    category: "Ready Food",
-    name: "Falafel Box",
-    nameAr: "علبة فلافل",
-    price: 6.9,
-    emoji: "🧆",
-  },
-  {
-    id: 7,
-    store: "Bosra Market",
-    category: "Frozen",
-    name: "Frozen Kibbeh",
-    nameAr: "كبة مجمدة",
-    price: 7.5,
-    emoji: "🧊",
-  },
-  {
-    id: 8,
-    store: "Bosra Market",
-    category: "Drinks",
-    name: "Ayran",
-    nameAr: "عيران",
-    price: 1.6,
-    emoji: "🥤",
-  },
-  {
-    id: 9,
-    store: "Netto",
-    category: "Vegetables",
-    name: "Tomatoes",
-    nameAr: "بندورة",
-    price: 2.2,
-    emoji: "🍅",
-  },
-  {
-    id: 10,
-    store: "Netto",
-    category: "Dairy",
-    name: "Milk",
-    nameAr: "حليب",
-    price: 1.35,
-    emoji: "🥛",
-  },
-  {
-    id: 11,
-    store: "Netto",
-    category: "Bread",
-    name: "Toast Bread",
-    nameAr: "توست",
-    price: 1.49,
-    emoji: "🍞",
-  },
-  {
-    id: 12,
-    store: "Netto",
-    category: "Drinks",
-    name: "Orange Juice",
-    nameAr: "عصير برتقال",
-    price: 2.8,
-    emoji: "🧃",
-  },
-  {
-    id: 13,
-    store: "Lidl",
-    category: "Vegetables",
-    name: "Cucumbers",
-    nameAr: "خيار",
-    price: 1.19,
-    emoji: "🥒",
-  },
-  {
-    id: 14,
-    store: "Lidl",
-    category: "Drinks",
-    name: "Mineral Water",
-    nameAr: "مياه معدنية",
-    price: 0.89,
-    emoji: "💧",
-  },
-  {
-    id: 15,
-    store: "Lidl",
-    category: "Snacks",
-    name: "Chocolate",
-    nameAr: "شوكولا",
-    price: 1.9,
-    emoji: "🍫",
-  },
-  {
-    id: 16,
-    store: "Lidl",
-    category: "Rice & Grains",
-    name: "Rice",
-    nameAr: "رز",
-    price: 3.4,
-    emoji: "🍚",
-  },
+  { id: 1, store: "Atlantic Arabic Market", category: "Bread", name: "Arabic Bread", nameAr: "خبز عربي", price: 2.5, emoji: "🥖" },
+  { id: 2, store: "Atlantic Arabic Market", category: "Dairy", name: "Labneh", nameAr: "لبنة", price: 3.2, emoji: "🥛" },
+  { id: 3, store: "Atlantic Arabic Market", category: "Rice & Grains", name: "Basmati Rice", nameAr: "رز بسمتي", price: 6.9, emoji: "🍚" },
+  { id: 4, store: "Atlantic Arabic Market", category: "Snacks", name: "Tahini", nameAr: "طحينة", price: 4.1, emoji: "🥣" },
+
+  { id: 5, store: "Bosra Market", category: "Bread", name: "Saj Bread", nameAr: "خبز صاج", price: 2.8, emoji: "🫓" },
+  { id: 6, store: "Bosra Market", category: "Ready Food", name: "Falafel Box", nameAr: "علبة فلافل", price: 6.9, emoji: "🧆" },
+  { id: 7, store: "Bosra Market", category: "Frozen", name: "Frozen Kibbeh", nameAr: "كبة مجمدة", price: 7.5, emoji: "🧊" },
+  { id: 8, store: "Bosra Market", category: "Drinks", name: "Ayran", nameAr: "عيران", price: 1.6, emoji: "🥤" },
+
+  { id: 9, store: "Netto", category: "Vegetables", name: "Tomatoes", nameAr: "بندورة", price: 2.2, emoji: "🍅" },
+  { id: 10, store: "Netto", category: "Dairy", name: "Milk", nameAr: "حليب", price: 1.35, emoji: "🥛" },
+  { id: 11, store: "Netto", category: "Bread", name: "Toast Bread", nameAr: "توست", price: 1.49, emoji: "🍞" },
+  { id: 12, store: "Netto", category: "Drinks", name: "Orange Juice", nameAr: "عصير برتقال", price: 2.8, emoji: "🧃" },
+
+  { id: 13, store: "Lidl", category: "Vegetables", name: "Cucumbers", nameAr: "خيار", price: 1.19, emoji: "🥒" },
+  { id: 14, store: "Lidl", category: "Drinks", name: "Mineral Water", nameAr: "مياه معدنية", price: 0.89, emoji: "💧" },
+  { id: 15, store: "Lidl", category: "Snacks", name: "Chocolate", nameAr: "شوكولا", price: 1.9, emoji: "🍫" },
+  { id: 16, store: "Lidl", category: "Rice & Grains", name: "Rice", nameAr: "رز", price: 3.4, emoji: "🍚" },
 ];
 
 export default function Door2DoorShopLite() {
   const phone = "4917672105595";
+
   const [store, setStore] = useState("All Stores");
   const [category, setCategory] = useState("All");
   const [cart, setCart] = useState([]);
+
   const [customerName, setCustomerName] = useState("");
-  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [street, setStreet] = useState("");
+  const [floor, setFloor] = useState("");
+  const [apartment, setApartment] = useState("");
   const [note, setNote] = useState("");
-  const [language, setLanguage] = useState("AR");
 
-  const labels = {
-    EN: {
-      subtitle: "Door2Door shopping app prototype for Regensburg",
-      stores: "Stores",
-      categories: "Categories",
-      products: "Products",
-      cart: "Cart",
-      details: "Order details",
-      total: "Total",
-      add: "Add",
-      send: "Send order via WhatsApp",
-      empty: "Your cart is empty",
-      name: "Your name",
-      address: "Your address",
-      note: "Note",
-      area: "Regensburg only",
-      allStores: "All Stores",
-      all: "All",
-      storeMap: {
-        "Atlantic Arabic Market": "Atlantic Arabic Market",
-        "Bosra Market": "Bosra Market",
-        Netto: "Netto",
-        Lidl: "Lidl",
-      },
-      catMap: {
-        Bread: "Bread",
-        Dairy: "Dairy",
-        "Rice & Grains": "Rice & Grains",
-        Vegetables: "Vegetables",
-        Drinks: "Drinks",
-        Snacks: "Snacks",
-        Frozen: "Frozen",
-        "Ready Food": "Ready Food",
-      },
-    },
-    DE: {
-      subtitle: "Door2Door Einkaufs-App-Prototyp für Regensburg",
-      stores: "Geschäfte",
-      categories: "Kategorien",
-      products: "Produkte",
-      cart: "Warenkorb",
-      details: "Bestelldaten",
-      total: "Gesamt",
-      add: "Hinzufügen",
-      send: "Per WhatsApp bestellen",
-      empty: "Ihr Warenkorb ist leer",
-      name: "Ihr Name",
-      address: "Ihre Adresse",
-      note: "Hinweis",
-      area: "Nur Regensburg",
-      allStores: "Alle Geschäfte",
-      all: "Alle",
-      storeMap: {
-        "Atlantic Arabic Market": "Atlantic Arabischer Markt",
-        "Bosra Market": "Bosra Markt",
-        Netto: "Netto",
-        Lidl: "Lidl",
-      },
-      catMap: {
-        Bread: "Brot",
-        Dairy: "Milchprodukte",
-        "Rice & Grains": "Reis & Getreide",
-        Vegetables: "Gemüse",
-        Drinks: "Getränke",
-        Snacks: "Snacks",
-        Frozen: "Tiefkühl",
-        "Ready Food": "Fertiggerichte",
-      },
-    },
-    AR: {
-      subtitle: "نموذج تطبيق Door2Door للتسوق في ريغنسبورغ",
-      stores: "المحلات",
-      categories: "الأقسام",
-      products: "المنتجات",
-      cart: "السلة",
-      details: "تفاصيل الطلب",
-      total: "المجموع",
-      add: "إضافة",
-      send: "إرسال الطلب عبر واتساب",
-      empty: "السلة فارغة",
-      name: "الاسم",
-      address: "العنوان",
-      note: "ملاحظة",
-      area: "ريغنسبورغ فقط",
-      allStores: "كل المحلات",
-      all: "الكل",
-      storeMap: {
-        "Atlantic Arabic Market": "محل أتلانتك العربي",
-        "Bosra Market": "محل بصرى",
-        Netto: "نتو",
-        Lidl: "ليدل",
-      },
-      catMap: {
-        Bread: "خبز",
-        Dairy: "ألبان",
-        "Rice & Grains": "رز وحبوب",
-        Vegetables: "خضار",
-        Drinks: "مشروبات",
-        Snacks: "سناكات",
-        Frozen: "مجمّدات",
-        "Ready Food": "أكل جاهز",
-      },
-    },
-  };
-
-  const t = labels[language];
+  const [tip, setTip] = useState(0);
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((p) => {
@@ -314,194 +91,138 @@ export default function Door2DoorShopLite() {
     );
   };
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const itemsTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const finalTotal = itemsTotal + DELIVERY_FEE + Number(tip);
 
   const sendOrder = () => {
+    if (itemsTotal < MIN_ORDER) {
+      alert(`Minimum order is €${MIN_ORDER}`);
+      return;
+    }
+
     const lines = cart.map(
       (item) =>
-        `- ${item.name} / ${item.nameAr} | ${item.store} x${item.qty} = €${(
-          item.price * item.qty
-        ).toFixed(2)}`
+        `- ${item.name} x${item.qty} = €${(item.price * item.qty).toFixed(2)}`
     );
 
     const message = [
       "New Door2Door Order",
-      `Name: ${customerName || "-"}`,
-      `Address: ${address || "-"}`,
+      "",
+      `Name: ${customerName}`,
+      `Phone: ${phoneNumber}`,
+      `Street: ${street}`,
+      `Floor: ${floor}`,
+      `Apartment: ${apartment}`,
       "",
       "Items:",
       ...lines,
       "",
-      `Total: €${total.toFixed(2)}`,
-      `Note: ${note || "-"}`,
+      `Items total: €${itemsTotal.toFixed(2)}`,
+      `Delivery: €${DELIVERY_FEE}`,
+      `Tip: €${tip}`,
+      `Final total: €${finalTotal.toFixed(2)}`,
       "",
-      "Prices may vary slightly depending on the store.",
+      `Note: ${note || "-"}`,
       "Regensburg only",
     ].join("\n");
 
     const encoded = encodeURIComponent(message);
+
     window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
   };
 
-  const getStoreLabel = (value) => {
-    if (value === "All Stores") return t.allStores;
-    return t.storeMap[value] || value;
-  };
-
-  const getCategoryLabel = (value) => {
-    if (value === "All") return t.all;
-    return t.catMap[value] || value;
-  };
-
   return (
-    <div className="min-h-screen bg-[#f36c21] text-white">
-      <div className="mx-auto max-w-7xl px-4 py-6">
-        <div className="mb-6 flex flex-col gap-4 rounded-[32px] bg-white/10 p-5 shadow-2xl backdrop-blur-sm border border-white/15 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="text-4xl font-extrabold tracking-tight">Door2Door</div>
-            <div className="mt-2 text-sm text-white/90">{t.subtitle}</div>
-            <div className="mt-2 text-sm text-white/80">{t.area}</div>
-          </div>
-          <div className="flex items-center gap-2">
-            {['AR', 'DE', 'EN'].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => setLanguage(lang)}
-                className={`rounded-xl px-4 py-2 text-sm font-semibold shadow ${language === lang ? 'bg-white text-[#f36c21]' : 'bg-white/15 text-white'}`}
-              >
-                {lang}
-              </button>
-            ))}
-          </div>
+    <div className="min-h-screen bg-[#f36c21] p-6 text-white">
+      <h1 className="text-4xl font-bold mb-6">Door2Door</h1>
+
+      <div className="grid gap-6 lg:grid-cols-4">
+
+        <div>
+          <h2 className="font-bold mb-3">Stores</h2>
+          {STORES.map((s) => (
+            <button key={s} onClick={() => setStore(s)} className="block w-full bg-white text-black p-2 mb-2 rounded">
+              {s}
+            </button>
+          ))}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_1fr_1.8fr_1.2fr]">
-          <div className="rounded-[28px] bg-white p-5 text-[#0F2A43] shadow-2xl">
-            <div className="text-lg font-bold">{t.stores}</div>
-            <div className="mt-4 space-y-3">
-              {STORES.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setStore(item)}
-                  className={`w-full rounded-2xl px-4 py-3 text-left font-medium transition ${store === item ? 'bg-[#f36c21] text-white' : 'bg-slate-100 text-[#0F2A43]'}`}
-                >
-                  {getStoreLabel(item)}
-                </button>
-              ))}
-            </div>
-          </div>
+        <div>
+          <h2 className="font-bold mb-3">Categories</h2>
+          {CATEGORIES.map((c) => (
+            <button key={c} onClick={() => setCategory(c)} className="block w-full bg-white text-black p-2 mb-2 rounded">
+              {c}
+            </button>
+          ))}
+        </div>
 
-          <div className="rounded-[28px] bg-white p-5 text-[#0F2A43] shadow-2xl">
-            <div className="text-lg font-bold">{t.categories}</div>
-            <div className="mt-4 space-y-3">
-              {CATEGORIES.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setCategory(item)}
-                  className={`w-full rounded-2xl px-4 py-3 text-left font-medium transition ${category === item ? 'bg-[#f36c21] text-white' : 'bg-slate-100 text-[#0F2A43]'}`}
-                >
-                  {getCategoryLabel(item)}
-                </button>
-              ))}
+        <div className="lg:col-span-1">
+          <h2 className="font-bold mb-3">Products</h2>
+          {filteredProducts.map((p) => (
+            <div key={p.id} className="bg-white text-black p-3 rounded mb-3">
+              <div className="text-xl">{p.emoji}</div>
+              <div>{p.name}</div>
+              <div>€{p.price}</div>
+              <button onClick={() => addToCart(p)} className="bg-black text-white px-3 py-1 mt-2 rounded">
+                Add
+              </button>
             </div>
-          </div>
+          ))}
+        </div>
 
-          <div className="rounded-[28px] bg-white p-5 text-[#0F2A43] shadow-2xl">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-lg font-bold">{t.products}</div>
-              <div className="rounded-full bg-[#f36c21]/10 px-3 py-1 text-xs font-semibold text-[#f36c21]">
-                {getStoreLabel(store)} / {getCategoryLabel(category)}
+        <div>
+          <h2 className="font-bold mb-3">Cart</h2>
+
+          {cart.map((item) => (
+            <div key={item.id} className="bg-white text-black p-3 mb-2 rounded">
+              {item.name}
+              <div>
+                <button onClick={() => updateQty(item.id, -1)}>-</button>
+                {item.qty}
+                <button onClick={() => updateQty(item.id, 1)}>+</button>
               </div>
             </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {filteredProducts.map((product) => (
-                <div key={product.id} className="rounded-3xl bg-slate-50 p-4 shadow-sm border border-slate-100">
-                  <div className="text-4xl">{product.emoji}</div>
-                  <div className="mt-3 text-base font-bold">{language === 'AR' ? product.nameAr : product.name}</div>
-                  <div className="text-sm text-slate-500">{product.nameAr}</div>
-                  <div className="mt-1 text-xs text-slate-400">{getStoreLabel(product.store)} • {getCategoryLabel(product.category)}</div>
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <div className="text-lg font-extrabold text-[#f36c21]">€{product.price.toFixed(2)}</div>
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="rounded-xl bg-[#0F2A43] px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      {t.add}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
 
-          <div className="rounded-[28px] bg-[#0F2A43] p-5 text-white shadow-2xl">
-            <div className="text-lg font-bold">{t.cart}</div>
-            <div className="mt-4 space-y-3">
-              {cart.length === 0 ? (
-                <div className="rounded-2xl bg-white/10 p-4 text-sm text-white/80">{t.empty}</div>
-              ) : (
-                cart.map((item) => (
-                  <div key={item.id} className="rounded-2xl bg-white/10 p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="font-semibold">{language === 'AR' ? item.nameAr : item.name}</div>
-                        <div className="text-xs text-white/70">{getStoreLabel(item.store)}</div>
-                        <div className="mt-1 text-sm text-white/80">€{item.price.toFixed(2)}</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => updateQty(item.id, -1)} className="h-8 w-8 rounded-lg bg-white/15">-</button>
-                        <span className="min-w-5 text-center font-bold">{item.qty}</span>
-                        <button onClick={() => updateQty(item.id, 1)} className="h-8 w-8 rounded-lg bg-white/15">+</button>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+          <div className="mt-4 bg-white text-black p-3 rounded">
+            <h3 className="font-bold mb-2">Delivery info</h3>
 
-            <div className="mt-5 rounded-2xl bg-white/10 p-4">
-              <div className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-white/70">{t.details}</div>
-              <div className="space-y-3">
-                <input
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder={t.name}
-                  className="w-full rounded-xl border border-white/10 bg-white/90 px-4 py-3 text-sm text-[#0F2A43] outline-none"
-                />
-                <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder={t.address}
-                  className="w-full rounded-xl border border-white/10 bg-white/90 px-4 py-3 text-sm text-[#0F2A43] outline-none"
-                />
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder={t.note}
-                  rows={3}
-                  className="w-full rounded-xl border border-white/10 bg-white/90 px-4 py-3 text-sm text-[#0F2A43] outline-none"
-                />
+            <input placeholder="Name" value={customerName} onChange={(e)=>setCustomerName(e.target.value)} className="w-full p-2 mb-2" />
+
+            <input placeholder="Phone number" value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} className="w-full p-2 mb-2" />
+
+            <input placeholder="Street + number" value={street} onChange={(e)=>setStreet(e.target.value)} className="w-full p-2 mb-2" />
+
+            <input placeholder="Floor" value={floor} onChange={(e)=>setFloor(e.target.value)} className="w-full p-2 mb-2" />
+
+            <input placeholder="Apartment" value={apartment} onChange={(e)=>setApartment(e.target.value)} className="w-full p-2 mb-2" />
+
+            <textarea placeholder="Note" value={note} onChange={(e)=>setNote(e.target.value)} className="w-full p-2 mb-2" />
+
+            <div className="mb-3">
+              Tip:
+              <div className="flex gap-2 mt-1">
+                {[0,1,2,3,5].map((t)=> (
+                  <button key={t} onClick={()=>setTip(t)} className="bg-black text-white px-2 py-1">
+                    €{t}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="mt-5 flex items-center justify-between text-lg font-bold">
-              <span>{t.total}</span>
-              <span>€{total.toFixed(2)}</span>
-            </div>
+            <div>Items: €{itemsTotal.toFixed(2)}</div>
+            <div>Delivery: €{DELIVERY_FEE}</div>
+            <div>Tip: €{tip}</div>
+            <div className="font-bold">Total: €{finalTotal.toFixed(2)}</div>
 
-            <button
-              onClick={sendOrder}
-              disabled={cart.length === 0}
-              className="mt-4 w-full rounded-2xl bg-[#25D366] px-4 py-3 text-base font-bold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {t.send}
+            <button onClick={sendOrder} className="bg-green-600 text-white w-full mt-3 p-2 rounded">
+              Send order via WhatsApp
             </button>
 
-            <div className="mt-3 text-center text-xs text-white/70">
-              WhatsApp: +49 176 72105595
-            </div>
+            <div className="text-xs mt-2">Minimum order €{MIN_ORDER}</div>
+
           </div>
         </div>
+
       </div>
     </div>
   );
