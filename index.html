@@ -1,183 +1,328 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Door2Door</title>
-<style>
-body{margin:0;font-family:Arial;background:linear-gradient(135deg,#f36c21,#f89a55);} 
-.container{max-width:1300px;margin:auto;padding:20px}
-.header{color:white;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:220px 220px 1fr 320px;gap:20px}
-.card{background:white;border-radius:20px;padding:15px;box-shadow:0 10px 20px rgba(0,0,0,.15)}
-button{cursor:pointer;border:none;border-radius:12px;padding:10px}
-.storeBtn,.catBtn{width:100%;margin-bottom:8px;background:#f2f2f2}
-.product{border:1px solid #eee;border-radius:16px;padding:12px;margin-bottom:10px}
-.product button{background:#0F2A43;color:white}
-.cartItem{background:rgba(255,255,255,.1);padding:10px;border-radius:10px;margin-bottom:8px}
-.cart{background:#0F2A43;color:white;border-radius:20px;padding:15px}
-input,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px}
-.tip button{margin-right:5px}
-.totalBox{background:rgba(255,255,255,.15);padding:10px;border-radius:12px;margin-top:10px}
-.whatsapp{background:#25D366;color:white;width:100%;margin-top:10px;font-weight:bold}
-</style>
-</head>
-<body>
+import { useMemo, useState } from "react";
 
-<div class="container">
+const stores = [
+  {
+    id: "rewe",
+    name: "REWE",
+    subtitle: "Fresh groceries",
+    accent: "bg-red-500",
+    categories: [
+      { id: "offers", name: "Angebote", image: "💯", badge: "Angebot" },
+      { id: "new", name: "Neu", image: "🛍️" },
+      { id: "best", name: "REWE Beste Wahl", image: "🟥" },
+      { id: "bio", name: "REWE Bio", image: "🌿" },
+      { id: "feine", name: "REWE Feine Welt", image: "✨" },
+      { id: "fruit", name: "Obst", image: "🍎" },
+      { id: "veg", name: "Gemüse", image: "🥬" },
+      { id: "bread", name: "Gebäck & Brot", image: "🍞", badge: "Angebot" },
+      { id: "breakfast", name: "Frühstück", image: "🥣", badge: "Angebot" },
+      { id: "fresh", name: "Fix & Frisch", image: "🥪", badge: "Angebot" },
+      { id: "milk", name: "Eier & Milch", image: "🥚", badge: "Angebot" },
+      { id: "yogurt", name: "Joghurts", image: "🥛" },
+      { id: "drinks", name: "Getränke", image: "🥤", badge: "Angebot" },
+      { id: "cheese", name: "Käse", image: "🧀", badge: "Angebot" },
+      { id: "meat", name: "Frisches Fleisch", image: "🥩" },
+      { id: "vegan", name: "Pflanzliche Produkte", image: "🌱" },
+      { id: "rice", name: "Nudeln & Reis", image: "🍚" },
+      { id: "spices", name: "Gewürze & Saucen", image: "🫙" },
+      { id: "cans", name: "Konserven & Backen", image: "🥫" },
+      { id: "frozen", name: "Gefrierfach", image: "🧊", badge: "Angebot" },
+      { id: "ice", name: "Speiseeis", image: "🍦" },
+      { id: "snacks", name: "Chips, Nüsse & Flips", image: "🥔", badge: "Angebot" },
+      { id: "cookies", name: "Cookies & Schokolade", image: "🍫", badge: "Angebot" },
+      { id: "coffee", name: "Kaffee & Tee", image: "☕", badge: "Angebot" },
+      { id: "household", name: "Haushalt", image: "🧻", badge: "Angebot" },
+      { id: "baby", name: "Baby", image: "🍼", badge: "Angebot" },
+    ],
+  },
+  {
+    id: "lidl",
+    name: "Lidl",
+    subtitle: "Daily essentials",
+    accent: "bg-blue-600",
+    categories: [
+      { id: "offers", name: "Offers", image: "💯", badge: "Sale" },
+      { id: "drinks", name: "Drinks", image: "🥤" },
+      { id: "fruit", name: "Fruit", image: "🍌" },
+      { id: "veg", name: "Vegetables", image: "🥒" },
+      { id: "bread", name: "Bread", image: "🥖" },
+      { id: "milk", name: "Milk & Eggs", image: "🥚" },
+      { id: "rice", name: "Rice & Pasta", image: "🍚" },
+      { id: "snacks", name: "Snacks", image: "🍪" },
+    ],
+  },
+  {
+    id: "netto",
+    name: "Netto",
+    subtitle: "Fast shopping",
+    accent: "bg-yellow-400",
+    categories: [
+      { id: "offers", name: "Angebote", image: "💯", badge: "Sale" },
+      { id: "drinks", name: "Getränke", image: "🥤" },
+      { id: "milk", name: "Milchprodukte", image: "🥛" },
+      { id: "veg", name: "Gemüse", image: "🍅" },
+      { id: "bread", name: "Brot", image: "🍞" },
+      { id: "snacks", name: "Snacks", image: "🍫" },
+    ],
+  },
+  {
+    id: "atlantic",
+    name: "Atlantic Arabic Market",
+    subtitle: "Arabic groceries",
+    accent: "bg-orange-500",
+    categories: [
+      { id: "bread", name: "خبز ومعجنات", image: "🫓" },
+      { id: "dairy", name: "ألبان وأجبان", image: "🧀" },
+      { id: "rice", name: "رز وبرغل", image: "🍚" },
+      { id: "spices", name: "بهارات", image: "🫙" },
+      { id: "frozen", name: "مجمّدات", image: "🧊" },
+      { id: "drinks", name: "مشروبات", image: "🥤" },
+      { id: "snacks", name: "سناكات", image: "🍫" },
+      { id: "household", name: "منزلية", image: "🧻" },
+    ],
+  },
+  {
+    id: "bosra",
+    name: "Bosra Market",
+    subtitle: "Arabic & Syrian food",
+    accent: "bg-emerald-500",
+    categories: [
+      { id: "ready", name: "أكل جاهز", image: "🧆" },
+      { id: "bread", name: "خبز", image: "🥖" },
+      { id: "dairy", name: "ألبان", image: "🥛" },
+      { id: "rice", name: "حبوب ورز", image: "🍚" },
+      { id: "frozen", name: "مجمّدات", image: "🧊" },
+      { id: "drinks", name: "مشروبات", image: "🥤" },
+      { id: "snacks", name: "سناكات", image: "🍪" },
+    ],
+  },
+];
 
-<div class="header">
-<h1>Door2Door</h1>
-<p>Fast delivery in Regensburg</p>
-</div>
+const sampleProducts = {
+  drinks: [
+    { id: 1, name: "Coca-Cola 1L", price: 2.49, image: "🥤" },
+    { id: 2, name: "Water 1.5L", price: 0.99, image: "💧" },
+    { id: 3, name: "Orange Juice", price: 2.79, image: "🧃" },
+  ],
+  fruit: [
+    { id: 4, name: "Bananas", price: 1.99, image: "🍌" },
+    { id: 5, name: "Apples", price: 2.29, image: "🍎" },
+  ],
+  veg: [
+    { id: 6, name: "Tomatoes", price: 2.19, image: "🍅" },
+    { id: 7, name: "Cucumbers", price: 1.29, image: "🥒" },
+  ],
+  bread: [
+    { id: 8, name: "Arabic Bread", price: 2.50, image: "🥖" },
+    { id: 9, name: "Toast Bread", price: 1.49, image: "🍞" },
+  ],
+  milk: [
+    { id: 10, name: "Milk 1L", price: 1.35, image: "🥛" },
+    { id: 11, name: "Eggs 10 pcs", price: 2.99, image: "🥚" },
+  ],
+  rice: [
+    { id: 12, name: "Basmati Rice", price: 6.90, image: "🍚" },
+    { id: 13, name: "Pasta", price: 1.49, image: "🍝" },
+  ],
+  snacks: [
+    { id: 14, name: "Chocolate", price: 1.90, image: "🍫" },
+    { id: 15, name: "Cookies", price: 2.20, image: "🍪" },
+  ],
+  offers: [
+    { id: 16, name: "Weekly Deal", price: 3.99, image: "💥" },
+  ],
+  dairy: [
+    { id: 17, name: "Labneh", price: 3.20, image: "🥛" },
+    { id: 18, name: "Cheese", price: 3.99, image: "🧀" },
+  ],
+  spices: [
+    { id: 19, name: "Mixed Spices", price: 2.99, image: "🫙" },
+  ],
+  frozen: [
+    { id: 20, name: "Frozen Kibbeh", price: 7.50, image: "🧊" },
+  ],
+  household: [
+    { id: 21, name: "Paper Towels", price: 2.79, image: "🧻" },
+  ],
+  ready: [
+    { id: 22, name: "Falafel Box", price: 6.90, image: "🧆" },
+  ],
+  new: [{ id: 23, name: "New Product", price: 4.20, image: "🛍️" }],
+  best: [{ id: 24, name: "Best Choice", price: 3.50, image: "⭐" }],
+  bio: [{ id: 25, name: "Organic Product", price: 4.10, image: "🌿" }],
+  feine: [{ id: 26, name: "Premium Product", price: 5.90, image: "✨" }],
+  cheese: [{ id: 27, name: "Cheese Selection", price: 4.90, image: "🧀" }],
+  meat: [{ id: 28, name: "Fresh Meat", price: 8.90, image: "🥩" }],
+  vegan: [{ id: 29, name: "Vegan Burger", price: 4.40, image: "🌱" }],
+  cans: [{ id: 30, name: "Tomato Sauce", price: 1.80, image: "🥫" }],
+  ice: [{ id: 31, name: "Ice Cream", price: 3.20, image: "🍦" }],
+  coffee: [{ id: 32, name: "Coffee Beans", price: 5.99, image: "☕" }],
+  yogurt: [{ id: 33, name: "Yogurt", price: 1.20, image: "🥣" }],
+  breakfast: [{ id: 34, name: "Cereal", price: 2.80, image: "🥣" }],
+  fresh: [{ id: 35, name: "Fresh Sandwich", price: 3.90, image: "🥪" }],
+};
 
-<div class="grid">
-
-<div class="card" id="stores"></div>
-<div class="card" id="categories"></div>
-<div class="card" id="products"></div>
-<div class="cart" id="cart"></div>
-
-</div>
-</div>
-
-<script>
-
-const STORES=["All Stores","Atlantic Arabic Market","Bosra Market","Netto","Lidl"]
-const CATEGORIES=["All","Bread","Dairy","Rice","Vegetables","Drinks","Snacks"]
-
-const PRODUCTS=[
-{id:1,store:"Atlantic Arabic Market",category:"Bread",name:"Arabic Bread",price:2.5,emoji:"🥖"},
-{id:2,store:"Atlantic Arabic Market",category:"Dairy",name:"Labneh",price:3.2,emoji:"🥛"},
-{id:3,store:"Bosra Market",category:"Snacks",name:"Falafel",price:6.9,emoji:"🧆"},
-{id:4,store:"Netto",category:"Dairy",name:"Milk",price:1.35,emoji:"🥛"},
-{id:5,store:"Netto",category:"Vegetables",name:"Tomatoes",price:2.2,emoji:"🍅"},
-{id:6,store:"Lidl",category:"Drinks",name:"Water",price:0.89,emoji:"💧"},
-{id:7,store:"Lidl",category:"Snacks",name:"Chocolate",price:1.9,emoji:"🍫"}
-]
-
-let store="All Stores"
-let category="All"
-let cart=[]
-let tip=0
-
-const DELIVERY=2.5
-const MIN_ORDER=10
-
-function renderStores(){
-let html="<h3>Stores</h3>"
-STORES.forEach(s=>{
-html+=`<button class='storeBtn' onclick="store='${s}';renderProducts()">${s}</button>`
-})
-document.getElementById("stores").innerHTML=html
+function CategoryCard({ category, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-[28px] bg-[#2b2b2b] p-4 text-left shadow-xl transition hover:-translate-y-0.5"
+    >
+      <div className="rounded-[22px] bg-[#f2efe9] flex items-center justify-center h-40 text-6xl shadow-inner">
+        {category.image}
+      </div>
+      <div className="mt-4 min-h-[64px] text-2xl font-medium leading-tight text-white">
+        {category.name}
+      </div>
+      {category.badge ? (
+        <div className="mt-2 inline-flex rounded-xl bg-[#f2d247] px-3 py-1 text-base font-semibold text-black">
+          {category.badge}
+        </div>
+      ) : null}
+    </button>
+  );
 }
 
-function renderCategories(){
-let html="<h3>Categories</h3>"
-CATEGORIES.forEach(c=>{
-html+=`<button class='catBtn' onclick="category='${c}';renderProducts()">${c}</button>`
-})
-document.getElementById("categories").innerHTML=html
+function ProductCard({ product, onAdd }) {
+  return (
+    <div className="rounded-[24px] bg-[#2b2b2b] p-4 shadow-xl">
+      <div className="rounded-[18px] bg-[#f2efe9] flex items-center justify-center h-32 text-5xl">
+        {product.image}
+      </div>
+      <div className="mt-3 text-xl font-medium text-white">{product.name}</div>
+      <div className="mt-1 text-lg font-semibold text-[#f2d247]">€{product.price.toFixed(2)}</div>
+      <button
+        onClick={onAdd}
+        className="mt-4 w-full rounded-2xl bg-[#f36c21] px-4 py-3 text-lg font-semibold text-white"
+      >
+        Add to cart
+      </button>
+    </div>
+  );
 }
 
-function renderProducts(){
-let list=PRODUCTS.filter(p=>(store==='All Stores'||p.store===store)&&(category==='All'||p.category===category))
-let html="<h3>Products</h3>"
-list.forEach(p=>{
-html+=`<div class='product'>
-<div style='font-size:30px'>${p.emoji}</div>
-<b>${p.name}</b><br>
-€${p.price}
-<br>
-<button onclick="addToCart(${p.id})">Add</button>
-</div>`
-})
-document.getElementById("products").innerHTML=html
+export default function Door2DoorLieferandoStyle() {
+  const [activeStoreId, setActiveStoreId] = useState("rewe");
+  const [activeCategoryId, setActiveCategoryId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [cart, setCart] = useState([]);
+
+  const activeStore = stores.find((s) => s.id === activeStoreId) || stores[0];
+
+  const shownCategories = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return activeStore.categories;
+    return activeStore.categories.filter((c) => c.name.toLowerCase().includes(q));
+  }, [activeStore, search]);
+
+  const shownProducts = useMemo(() => {
+    if (!activeCategoryId) return [];
+    const items = sampleProducts[activeCategoryId] || [];
+    const q = search.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((p) => p.name.toLowerCase().includes(q));
+  }, [activeCategoryId, search]);
+
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((p) => p.id === product.id);
+      if (existing) {
+        return prev.map((p) => (p.id === product.id ? { ...p, qty: p.qty + 1 } : p));
+      }
+      return [...prev, { ...product, qty: 1 }];
+    });
+  };
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  return (
+    <div className="min-h-screen bg-[#171717] text-white">
+      <div className="mx-auto max-w-7xl px-4 py-5">
+        <div className="flex items-center gap-4 rounded-b-[28px] border-b border-white/10 pb-4">
+          <button className="flex h-16 w-16 items-center justify-center rounded-full bg-[#232323] text-3xl shadow-lg">
+            ←
+          </button>
+          <div className="relative flex-1">
+            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-3xl text-[#e6902f]">⌕</span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Nach einem Artikel suchen"
+              className="w-full rounded-full bg-[#2b2b2b] py-5 pl-16 pr-5 text-2xl outline-none placeholder:text-[#b9b9b9]"
+            />
+          </div>
+        </div>
+
+        <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
+          {stores.map((store) => (
+            <button
+              key={store.id}
+              onClick={() => {
+                setActiveStoreId(store.id);
+                setActiveCategoryId(null);
+              }}
+              className={`whitespace-nowrap rounded-2xl px-4 py-3 text-lg font-semibold shadow-lg ${
+                activeStoreId === store.id ? "bg-white text-black" : "bg-[#2b2b2b] text-white"
+              }`}
+            >
+              {store.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-5 flex items-center justify-between">
+          <div>
+            <div className="text-4xl font-bold">{activeStore.name}</div>
+            <div className="mt-1 text-lg text-white/70">{activeStore.subtitle}</div>
+          </div>
+          <div className={`hidden rounded-2xl px-4 py-3 text-lg font-bold md:block ${activeStore.accent}`}>
+            {cart.reduce((sum, i) => sum + i.qty, 0)} items · €{total.toFixed(2)}
+          </div>
+        </div>
+
+        {!activeCategoryId ? (
+          <div className="mt-6 grid grid-cols-2 gap-5 md:grid-cols-3">
+            {shownCategories.map((category) => (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                onClick={() => setActiveCategoryId(category.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6">
+            <button
+              onClick={() => setActiveCategoryId(null)}
+              className="mb-5 rounded-2xl bg-[#2b2b2b] px-4 py-3 text-lg font-semibold"
+            >
+              ← Back to categories
+            </button>
+            <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
+              {shownProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAdd={() => addToCart(product)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="fixed bottom-5 left-1/2 z-20 w-[calc(100%-32px)] max-w-xl -translate-x-1/2 rounded-[26px] bg-[#f36c21] p-4 shadow-2xl md:right-5 md:left-auto md:w-[380px] md:translate-x-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-lg font-semibold">Cart</div>
+              <div className="text-sm text-white/80">{cart.length ? `${cart.reduce((s,i)=>s+i.qty,0)} items selected` : "No items yet"}</div>
+            </div>
+            <div className="text-2xl font-bold">€{total.toFixed(2)}</div>
+          </div>
+          <button className="mt-3 w-full rounded-2xl bg-white px-4 py-3 text-lg font-bold text-[#f36c21]">
+            Continue order
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-function addToCart(id){
-let item=cart.find(i=>i.id===id)
-if(item){item.qty++}
-else{
-let p=PRODUCTS.find(p=>p.id===id)
-cart.push({...p,qty:1})
-}
-renderCart()
-}
-
-function changeQty(id,d){
-let item=cart.find(i=>i.id===id)
-item.qty+=d
-if(item.qty<=0)cart=cart.filter(i=>i.id!==id)
-renderCart()
-}
-
-function renderCart(){
-let html="<h3>Cart</h3>"
-cart.forEach(i=>{
-html+=`<div class='cartItem'>${i.name}
-<br>
-<button onclick="changeQty(${i.id},-1)">-</button>
-${i.qty}
-<button onclick="changeQty(${i.id},1)">+</button>
-</div>`
-})
-
-let itemsTotal=cart.reduce((s,i)=>s+i.price*i.qty,0)
-let finalTotal=itemsTotal+DELIVERY+tip
-
-html+=`
-
-<h4>Delivery info</h4>
-<input id='name' placeholder='Name'>
-<input id='phone' placeholder='Phone'>
-<input id='street' placeholder='Street'>
-<textarea id='note' placeholder='Note'></textarea>
-
-<div class='tip'>Tip:
-<button onclick='tip=0;renderCart()'>0</button>
-<button onclick='tip=1;renderCart()'>1</button>
-<button onclick='tip=2;renderCart()'>2</button>
-<button onclick='tip=5;renderCart()'>5</button>
-</div>
-
-<div class='totalBox'>
-Items €${itemsTotal.toFixed(2)}<br>
-Delivery €${DELIVERY}<br>
-Tip €${tip}<br>
-<b>Total €${finalTotal.toFixed(2)}</b>
-</div>
-
-<button class='whatsapp' onclick='sendOrder()'>Send via WhatsApp</button>
-`
-
-document.getElementById("cart").innerHTML=html
-}
-
-function sendOrder(){
-let itemsTotal=cart.reduce((s,i)=>s+i.price*i.qty,0)
-if(itemsTotal<MIN_ORDER){alert("Minimum order €"+MIN_ORDER);return}
-
-let msg="New Door2Door Order\n"
-msg+="Name: "+document.getElementById("name").value+"\n"
-msg+="Phone: "+document.getElementById("phone").value+"\n"
-msg+="Street: "+document.getElementById("street").value+"\n\n"
-
-cart.forEach(i=>{
-msg+=i.name+" x"+i.qty+"\n"
-})
-
-msg+="\nTotal: €"+(itemsTotal+DELIVERY+tip).toFixed(2)
-
-window.open("https://wa.me/4917672105595?text="+encodeURIComponent(msg))
-}
-
-renderStores()
-renderCategories()
-renderProducts()
-renderCart()
-
-</script>
-
-</body>
-</html>
