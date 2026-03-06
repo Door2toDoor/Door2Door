@@ -1,229 +1,183 @@
-import { useMemo, useState } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Door2Door</title>
+<style>
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#f36c21,#f89a55);} 
+.container{max-width:1300px;margin:auto;padding:20px}
+.header{color:white;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:220px 220px 1fr 320px;gap:20px}
+.card{background:white;border-radius:20px;padding:15px;box-shadow:0 10px 20px rgba(0,0,0,.15)}
+button{cursor:pointer;border:none;border-radius:12px;padding:10px}
+.storeBtn,.catBtn{width:100%;margin-bottom:8px;background:#f2f2f2}
+.product{border:1px solid #eee;border-radius:16px;padding:12px;margin-bottom:10px}
+.product button{background:#0F2A43;color:white}
+.cartItem{background:rgba(255,255,255,.1);padding:10px;border-radius:10px;margin-bottom:8px}
+.cart{background:#0F2A43;color:white;border-radius:20px;padding:15px}
+input,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px}
+.tip button{margin-right:5px}
+.totalBox{background:rgba(255,255,255,.15);padding:10px;border-radius:12px;margin-top:10px}
+.whatsapp{background:#25D366;color:white;width:100%;margin-top:10px;font-weight:bold}
+</style>
+</head>
+<body>
 
-const STORES = [
-  "All Stores",
-  "Atlantic Arabic Market",
-  "Bosra Market",
-  "Netto",
-  "Lidl",
-];
+<div class="container">
 
-const CATEGORIES = [
-  "All",
-  "Bread",
-  "Dairy",
-  "Rice & Grains",
-  "Vegetables",
-  "Drinks",
-  "Snacks",
-  "Frozen",
-  "Ready Food",
-];
+<div class="header">
+<h1>Door2Door</h1>
+<p>Fast delivery in Regensburg</p>
+</div>
 
-const DELIVERY_FEE = 2.5;
-const MIN_ORDER = 10;
+<div class="grid">
 
-const PRODUCTS = [
-  { id: 1, store: "Atlantic Arabic Market", category: "Bread", name: "Arabic Bread", nameAr: "خبز عربي", price: 2.5, emoji: "🥖" },
-  { id: 2, store: "Atlantic Arabic Market", category: "Dairy", name: "Labneh", nameAr: "لبنة", price: 3.2, emoji: "🥛" },
-  { id: 3, store: "Atlantic Arabic Market", category: "Rice & Grains", name: "Basmati Rice", nameAr: "رز بسمتي", price: 6.9, emoji: "🍚" },
-  { id: 4, store: "Atlantic Arabic Market", category: "Snacks", name: "Tahini", nameAr: "طحينة", price: 4.1, emoji: "🥣" },
+<div class="card" id="stores"></div>
+<div class="card" id="categories"></div>
+<div class="card" id="products"></div>
+<div class="cart" id="cart"></div>
 
-  { id: 5, store: "Bosra Market", category: "Bread", name: "Saj Bread", nameAr: "خبز صاج", price: 2.8, emoji: "🫓" },
-  { id: 6, store: "Bosra Market", category: "Ready Food", name: "Falafel Box", nameAr: "علبة فلافل", price: 6.9, emoji: "🧆" },
-  { id: 7, store: "Bosra Market", category: "Frozen", name: "Frozen Kibbeh", nameAr: "كبة مجمدة", price: 7.5, emoji: "🧊" },
-  { id: 8, store: "Bosra Market", category: "Drinks", name: "Ayran", nameAr: "عيران", price: 1.6, emoji: "🥤" },
+</div>
+</div>
 
-  { id: 9, store: "Netto", category: "Vegetables", name: "Tomatoes", nameAr: "بندورة", price: 2.2, emoji: "🍅" },
-  { id: 10, store: "Netto", category: "Dairy", name: "Milk", nameAr: "حليب", price: 1.35, emoji: "🥛" },
-  { id: 11, store: "Netto", category: "Bread", name: "Toast Bread", nameAr: "توست", price: 1.49, emoji: "🍞" },
-  { id: 12, store: "Netto", category: "Drinks", name: "Orange Juice", nameAr: "عصير برتقال", price: 2.8, emoji: "🧃" },
+<script>
 
-  { id: 13, store: "Lidl", category: "Vegetables", name: "Cucumbers", nameAr: "خيار", price: 1.19, emoji: "🥒" },
-  { id: 14, store: "Lidl", category: "Drinks", name: "Mineral Water", nameAr: "مياه معدنية", price: 0.89, emoji: "💧" },
-  { id: 15, store: "Lidl", category: "Snacks", name: "Chocolate", nameAr: "شوكولا", price: 1.9, emoji: "🍫" },
-  { id: 16, store: "Lidl", category: "Rice & Grains", name: "Rice", nameAr: "رز", price: 3.4, emoji: "🍚" },
-];
+const STORES=["All Stores","Atlantic Arabic Market","Bosra Market","Netto","Lidl"]
+const CATEGORIES=["All","Bread","Dairy","Rice","Vegetables","Drinks","Snacks"]
 
-export default function Door2DoorShopLite() {
-  const phone = "4917672105595";
+const PRODUCTS=[
+{id:1,store:"Atlantic Arabic Market",category:"Bread",name:"Arabic Bread",price:2.5,emoji:"🥖"},
+{id:2,store:"Atlantic Arabic Market",category:"Dairy",name:"Labneh",price:3.2,emoji:"🥛"},
+{id:3,store:"Bosra Market",category:"Snacks",name:"Falafel",price:6.9,emoji:"🧆"},
+{id:4,store:"Netto",category:"Dairy",name:"Milk",price:1.35,emoji:"🥛"},
+{id:5,store:"Netto",category:"Vegetables",name:"Tomatoes",price:2.2,emoji:"🍅"},
+{id:6,store:"Lidl",category:"Drinks",name:"Water",price:0.89,emoji:"💧"},
+{id:7,store:"Lidl",category:"Snacks",name:"Chocolate",price:1.9,emoji:"🍫"}
+]
 
-  const [store, setStore] = useState("All Stores");
-  const [category, setCategory] = useState("All");
-  const [cart, setCart] = useState([]);
+let store="All Stores"
+let category="All"
+let cart=[]
+let tip=0
 
-  const [customerName, setCustomerName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [street, setStreet] = useState("");
-  const [floor, setFloor] = useState("");
-  const [apartment, setApartment] = useState("");
-  const [note, setNote] = useState("");
+const DELIVERY=2.5
+const MIN_ORDER=10
 
-  const [tip, setTip] = useState(0);
-
-  const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((p) => {
-      const storeMatch = store === "All Stores" || p.store === store;
-      const categoryMatch = category === "All" || p.category === category;
-      return storeMatch && categoryMatch;
-    });
-  }, [store, category]);
-
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
-        );
-      }
-      return [...prev, { ...product, qty: 1 }];
-    });
-  };
-
-  const updateQty = (id, delta) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, qty: Math.max(0, item.qty + delta) } : item
-        )
-        .filter((item) => item.qty > 0)
-    );
-  };
-
-  const itemsTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const finalTotal = itemsTotal + DELIVERY_FEE + Number(tip);
-
-  const sendOrder = () => {
-    if (itemsTotal < MIN_ORDER) {
-      alert(`Minimum order is €${MIN_ORDER}`);
-      return;
-    }
-
-    const lines = cart.map(
-      (item) =>
-        `- ${item.name} x${item.qty} = €${(item.price * item.qty).toFixed(2)}`
-    );
-
-    const message = [
-      "New Door2Door Order",
-      "",
-      `Name: ${customerName}`,
-      `Phone: ${phoneNumber}`,
-      `Street: ${street}`,
-      `Floor: ${floor}`,
-      `Apartment: ${apartment}`,
-      "",
-      "Items:",
-      ...lines,
-      "",
-      `Items total: €${itemsTotal.toFixed(2)}`,
-      `Delivery: €${DELIVERY_FEE}`,
-      `Tip: €${tip}`,
-      `Final total: €${finalTotal.toFixed(2)}`,
-      "",
-      `Note: ${note || "-"}`,
-      "Regensburg only",
-    ].join("\n");
-
-    const encoded = encodeURIComponent(message);
-
-    window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
-  };
-
-  return (
-    <div className="min-h-screen bg-[#f36c21] p-6 text-white">
-      <h1 className="text-4xl font-bold mb-6">Door2Door</h1>
-
-      <div className="grid gap-6 lg:grid-cols-4">
-
-        <div>
-          <h2 className="font-bold mb-3">Stores</h2>
-          {STORES.map((s) => (
-            <button key={s} onClick={() => setStore(s)} className="block w-full bg-white text-black p-2 mb-2 rounded">
-              {s}
-            </button>
-          ))}
-        </div>
-
-        <div>
-          <h2 className="font-bold mb-3">Categories</h2>
-          {CATEGORIES.map((c) => (
-            <button key={c} onClick={() => setCategory(c)} className="block w-full bg-white text-black p-2 mb-2 rounded">
-              {c}
-            </button>
-          ))}
-        </div>
-
-        <div className="lg:col-span-1">
-          <h2 className="font-bold mb-3">Products</h2>
-          {filteredProducts.map((p) => (
-            <div key={p.id} className="bg-white text-black p-3 rounded mb-3">
-              <div className="text-xl">{p.emoji}</div>
-              <div>{p.name}</div>
-              <div>€{p.price}</div>
-              <button onClick={() => addToCart(p)} className="bg-black text-white px-3 py-1 mt-2 rounded">
-                Add
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div>
-          <h2 className="font-bold mb-3">Cart</h2>
-
-          {cart.map((item) => (
-            <div key={item.id} className="bg-white text-black p-3 mb-2 rounded">
-              {item.name}
-              <div>
-                <button onClick={() => updateQty(item.id, -1)}>-</button>
-                {item.qty}
-                <button onClick={() => updateQty(item.id, 1)}>+</button>
-              </div>
-            </div>
-          ))}
-
-          <div className="mt-4 bg-white text-black p-3 rounded">
-            <h3 className="font-bold mb-2">Delivery info</h3>
-
-            <input placeholder="Name" value={customerName} onChange={(e)=>setCustomerName(e.target.value)} className="w-full p-2 mb-2" />
-
-            <input placeholder="Phone number" value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} className="w-full p-2 mb-2" />
-
-            <input placeholder="Street + number" value={street} onChange={(e)=>setStreet(e.target.value)} className="w-full p-2 mb-2" />
-
-            <input placeholder="Floor" value={floor} onChange={(e)=>setFloor(e.target.value)} className="w-full p-2 mb-2" />
-
-            <input placeholder="Apartment" value={apartment} onChange={(e)=>setApartment(e.target.value)} className="w-full p-2 mb-2" />
-
-            <textarea placeholder="Note" value={note} onChange={(e)=>setNote(e.target.value)} className="w-full p-2 mb-2" />
-
-            <div className="mb-3">
-              Tip:
-              <div className="flex gap-2 mt-1">
-                {[0,1,2,3,5].map((t)=> (
-                  <button key={t} onClick={()=>setTip(t)} className="bg-black text-white px-2 py-1">
-                    €{t}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>Items: €{itemsTotal.toFixed(2)}</div>
-            <div>Delivery: €{DELIVERY_FEE}</div>
-            <div>Tip: €{tip}</div>
-            <div className="font-bold">Total: €{finalTotal.toFixed(2)}</div>
-
-            <button onClick={sendOrder} className="bg-green-600 text-white w-full mt-3 p-2 rounded">
-              Send order via WhatsApp
-            </button>
-
-            <div className="text-xs mt-2">Minimum order €{MIN_ORDER}</div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
+function renderStores(){
+let html="<h3>Stores</h3>"
+STORES.forEach(s=>{
+html+=`<button class='storeBtn' onclick="store='${s}';renderProducts()">${s}</button>`
+})
+document.getElementById("stores").innerHTML=html
 }
+
+function renderCategories(){
+let html="<h3>Categories</h3>"
+CATEGORIES.forEach(c=>{
+html+=`<button class='catBtn' onclick="category='${c}';renderProducts()">${c}</button>`
+})
+document.getElementById("categories").innerHTML=html
+}
+
+function renderProducts(){
+let list=PRODUCTS.filter(p=>(store==='All Stores'||p.store===store)&&(category==='All'||p.category===category))
+let html="<h3>Products</h3>"
+list.forEach(p=>{
+html+=`<div class='product'>
+<div style='font-size:30px'>${p.emoji}</div>
+<b>${p.name}</b><br>
+€${p.price}
+<br>
+<button onclick="addToCart(${p.id})">Add</button>
+</div>`
+})
+document.getElementById("products").innerHTML=html
+}
+
+function addToCart(id){
+let item=cart.find(i=>i.id===id)
+if(item){item.qty++}
+else{
+let p=PRODUCTS.find(p=>p.id===id)
+cart.push({...p,qty:1})
+}
+renderCart()
+}
+
+function changeQty(id,d){
+let item=cart.find(i=>i.id===id)
+item.qty+=d
+if(item.qty<=0)cart=cart.filter(i=>i.id!==id)
+renderCart()
+}
+
+function renderCart(){
+let html="<h3>Cart</h3>"
+cart.forEach(i=>{
+html+=`<div class='cartItem'>${i.name}
+<br>
+<button onclick="changeQty(${i.id},-1)">-</button>
+${i.qty}
+<button onclick="changeQty(${i.id},1)">+</button>
+</div>`
+})
+
+let itemsTotal=cart.reduce((s,i)=>s+i.price*i.qty,0)
+let finalTotal=itemsTotal+DELIVERY+tip
+
+html+=`
+
+<h4>Delivery info</h4>
+<input id='name' placeholder='Name'>
+<input id='phone' placeholder='Phone'>
+<input id='street' placeholder='Street'>
+<textarea id='note' placeholder='Note'></textarea>
+
+<div class='tip'>Tip:
+<button onclick='tip=0;renderCart()'>0</button>
+<button onclick='tip=1;renderCart()'>1</button>
+<button onclick='tip=2;renderCart()'>2</button>
+<button onclick='tip=5;renderCart()'>5</button>
+</div>
+
+<div class='totalBox'>
+Items €${itemsTotal.toFixed(2)}<br>
+Delivery €${DELIVERY}<br>
+Tip €${tip}<br>
+<b>Total €${finalTotal.toFixed(2)}</b>
+</div>
+
+<button class='whatsapp' onclick='sendOrder()'>Send via WhatsApp</button>
+`
+
+document.getElementById("cart").innerHTML=html
+}
+
+function sendOrder(){
+let itemsTotal=cart.reduce((s,i)=>s+i.price*i.qty,0)
+if(itemsTotal<MIN_ORDER){alert("Minimum order €"+MIN_ORDER);return}
+
+let msg="New Door2Door Order\n"
+msg+="Name: "+document.getElementById("name").value+"\n"
+msg+="Phone: "+document.getElementById("phone").value+"\n"
+msg+="Street: "+document.getElementById("street").value+"\n\n"
+
+cart.forEach(i=>{
+msg+=i.name+" x"+i.qty+"\n"
+})
+
+msg+="\nTotal: €"+(itemsTotal+DELIVERY+tip).toFixed(2)
+
+window.open("https://wa.me/4917672105595?text="+encodeURIComponent(msg))
+}
+
+renderStores()
+renderCategories()
+renderProducts()
+renderCart()
+
+</script>
+
+</body>
+</html>
