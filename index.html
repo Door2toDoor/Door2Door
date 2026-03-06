@@ -1,325 +1,517 @@
-import { useMemo, useState } from "react";
-
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "Arabic Bread",
-    nameAr: "خبز عربي",
-    category: "Arabic Stores",
-    price: 2.5,
-    emoji: "🥖",
-  },
-  {
-    id: 2,
-    name: "Labneh",
-    nameAr: "لبنة",
-    category: "Arabic Stores",
-    price: 3.2,
-    emoji: "🥛",
-  },
-  {
-    id: 3,
-    name: "Rice",
-    nameAr: "رز",
-    category: "Supermarkets",
-    price: 4.0,
-    emoji: "🍚",
-  },
-  {
-    id: 4,
-    name: "Tomatoes",
-    nameAr: "بندورة",
-    category: "Supermarkets",
-    price: 2.2,
-    emoji: "🍅",
-  },
-  {
-    id: 5,
-    name: "Chicken Shawarma",
-    nameAr: "شاورما دجاج",
-    category: "Restaurants",
-    price: 8.5,
-    emoji: "🌯",
-  },
-  {
-    id: 6,
-    name: "Falafel Box",
-    nameAr: "علبة فلافل",
-    category: "Restaurants",
-    price: 6.9,
-    emoji: "🧆",
-  },
-  {
-    id: 7,
-    name: "Orange Juice",
-    nameAr: "عصير برتقال",
-    category: "Any Shop",
-    price: 2.8,
-    emoji: "🧃",
-  },
-  {
-    id: 8,
-    name: "Chocolate",
-    nameAr: "شوكولا",
-    category: "Any Shop",
-    price: 1.9,
-    emoji: "🍫",
-  },
-];
-
-const CATEGORIES = ["All", "Arabic Stores", "Supermarkets", "Restaurants", "Any Shop"];
-
-export default function Door2DoorShopLite() {
-  const phone = "4917672105595";
-  const [category, setCategory] = useState("All");
-  const [cart, setCart] = useState([]);
-  const [customerName, setCustomerName] = useState("");
-  const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
-  const [language, setLanguage] = useState("EN");
-
-  const labels = {
-    EN: {
-      subtitle: "Shop-like ordering for Door2Door in Regensburg",
-      searchHint: "Choose a category and add items to cart",
-      cart: "Cart",
-      checkout: "Checkout via WhatsApp",
-      name: "Your name",
-      address: "Your address",
-      note: "Note",
-      total: "Total",
-      empty: "Your cart is empty",
-      area: "Regensburg only",
-      categoryTitle: "Categories",
-      products: "Products",
-      details: "Order details",
-      add: "Add",
-      send: "Send order",
-    },
-    DE: {
-      subtitle: "Bestellung im Shop-Stil für Door2Door in Regensburg",
-      searchHint: "Kategorie wählen und Produkte in den Warenkorb legen",
-      cart: "Warenkorb",
-      checkout: "Per WhatsApp bestellen",
-      name: "Ihr Name",
-      address: "Ihre Adresse",
-      note: "Hinweis",
-      total: "Gesamt",
-      empty: "Ihr Warenkorb ist leer",
-      area: "Nur Regensburg",
-      categoryTitle: "Kategorien",
-      products: "Produkte",
-      details: "Bestelldaten",
-      add: "Hinzufügen",
-      send: "Bestellung senden",
-    },
-    AR: {
-      subtitle: "طلب بأسلوب متجر لتطبيق Door2Door في ريغنسبورغ",
-      searchHint: "اختر القسم وأضف المنتجات إلى السلة",
-      cart: "السلة",
-      checkout: "إتمام الطلب عبر واتساب",
-      name: "الاسم",
-      address: "العنوان",
-      note: "ملاحظة",
-      total: "المجموع",
-      empty: "السلة فارغة",
-      area: "ريغنسبورغ فقط",
-      categoryTitle: "الأقسام",
-      products: "المنتجات",
-      details: "تفاصيل الطلب",
-      add: "إضافة",
-      send: "إرسال الطلب",
-    },
-  };
-
-  const t = labels[language];
-
-  const filteredProducts = useMemo(() => {
-    if (category === "All") return PRODUCTS;
-    return PRODUCTS.filter((p) => p.category === category);
-  }, [category]);
-
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
-        );
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Door2Door</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f36c21;
+      color: #0f2a43;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .header {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 36px;
+      color: #f36c21;
+    }
+    .brand p {
+      margin: 6px 0 0;
+      color: #555;
+    }
+    .lang-switch {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .lang-btn {
+      border: none;
+      background: #0f2a43;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .lang-btn.active {
+      background: #f36c21;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr 320px;
+      gap: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 16px;
+    }
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .category-btn {
+      width: 100%;
+      border: none;
+      background: #f3f4f6;
+      color: #0f2a43;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      text-align: left;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .category-btn.active {
+      background: #f36c21;
+      color: white;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .product {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 14px;
+    }
+    .emoji {
+      font-size: 34px;
+    }
+    .product h3 {
+      margin: 10px 0 4px;
+      font-size: 17px;
+    }
+    .product .sub {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .product .price-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .price {
+      color: #f36c21;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .add-btn {
+      border: none;
+      background: #0f2a43;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .cart-area {
+      background: #0f2a43;
+      color: white;
+    }
+    .cart-item {
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .cart-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cart-item small {
+      color: rgba(255,255,255,0.75);
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .qty-btn {
+      border: none;
+      background: rgba(255,255,255,0.14);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    input, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .send-btn {
+      width: 100%;
+      border: none;
+      background: #25d366;
+      color: white;
+      padding: 14px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 14px;
+    }
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .muted {
+      color: #666;
+      font-size: 14px;
+    }
+    .cart-muted {
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
       }
-      return [...prev, { ...product, qty: 1 }];
-    });
-  };
-
-  const updateQty = (id, delta) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, qty: Math.max(0, item.qty + delta) } : item
-        )
-        .filter((item) => item.qty > 0)
-    );
-  };
-
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-  const sendOrder = () => {
-    const lines = cart.map(
-      (item) => `- ${item.name} / ${item.nameAr} x${item.qty} = €${(item.price * item.qty).toFixed(2)}`
-    );
-
-    const message = [
-      "New Door2Door Order",
-      `Name: ${customerName || "-"}`,
-      `Address: ${address || "-"}`,
-      "",
-      "Items:",
-      ...lines,
-      "",
-      `Total: €${total.toFixed(2)}`,
-      `Note: ${note || "-"}`,
-      "",
-      "Regensburg only",
-    ].join("\n");
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
-  };
-
-  return (
-    <div className="min-h-screen bg-[#f36c21] text-white">
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        <div className="mb-6 flex flex-col gap-4 rounded-[32px] bg-white/10 p-5 shadow-2xl backdrop-blur-sm border border-white/15 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="text-4xl font-extrabold tracking-tight">Door2Door</div>
-            <div className="mt-2 text-sm text-white/90">{t.subtitle}</div>
-            <div className="mt-2 text-sm text-white/80">{t.area}</div>
-          </div>
-          <div className="flex items-center gap-2">
-            {['EN', 'DE', 'AR'].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => setLanguage(lang)}
-                className={`rounded-xl px-4 py-2 text-sm font-semibold shadow ${language === lang ? 'bg-white text-[#f36c21]' : 'bg-white/15 text-white'}`}
-              >
-                {lang}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr_1.1fr]">
-          <div className="rounded-[28px] bg-white p-5 text-[#0F2A43] shadow-2xl">
-            <div className="text-lg font-bold">{t.categoryTitle}</div>
-            <div className="mt-2 text-sm text-slate-500">{t.searchHint}</div>
-            <div className="mt-4 space-y-3">
-              {CATEGORIES.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setCategory(item)}
-                  className={`w-full rounded-2xl px-4 py-3 text-left font-medium transition ${category === item ? 'bg-[#f36c21] text-white' : 'bg-slate-100 text-[#0F2A43]'}`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-[28px] bg-white p-5 text-[#0F2A43] shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-bold">{t.products}</div>
-              <div className="rounded-full bg-[#f36c21]/10 px-3 py-1 text-sm font-semibold text-[#f36c21]">
-                {category}
-              </div>
-            </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {filteredProducts.map((product) => (
-                <div key={product.id} className="rounded-3xl bg-slate-50 p-4 shadow-sm border border-slate-100">
-                  <div className="text-4xl">{product.emoji}</div>
-                  <div className="mt-3 text-base font-bold">{product.name}</div>
-                  <div className="text-sm text-slate-500">{product.nameAr}</div>
-                  <div className="mt-1 text-xs text-slate-400">{product.category}</div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="text-lg font-extrabold text-[#f36c21]">€{product.price.toFixed(2)}</div>
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="rounded-xl bg-[#0F2A43] px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      {t.add}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-[28px] bg-[#0F2A43] p-5 text-white shadow-2xl">
-            <div className="text-lg font-bold">{t.cart}</div>
-            <div className="mt-4 space-y-3">
-              {cart.length === 0 ? (
-                <div className="rounded-2xl bg-white/10 p-4 text-sm text-white/80">{t.empty}</div>
-              ) : (
-                cart.map((item) => (
-                  <div key={item.id} className="rounded-2xl bg-white/10 p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="font-semibold">{item.name}</div>
-                        <div className="text-xs text-white/70">{item.nameAr}</div>
-                        <div className="mt-1 text-sm text-white/80">€{item.price.toFixed(2)}</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => updateQty(item.id, -1)} className="h-8 w-8 rounded-lg bg-white/15">-</button>
-                        <span className="min-w-5 text-center font-bold">{item.qty}</span>
-                        <button onClick={() => updateQty(item.id, 1)} className="h-8 w-8 rounded-lg bg-white/15">+</button>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-5 rounded-2xl bg-white/10 p-4">
-              <div className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-white/70">{t.details}</div>
-              <div className="space-y-3">
-                <input
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder={t.name}
-                  className="w-full rounded-xl border border-white/10 bg-white/90 px-4 py-3 text-sm text-[#0F2A43] outline-none"
-                />
-                <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder={t.address}
-                  className="w-full rounded-xl border border-white/10 bg-white/90 px-4 py-3 text-sm text-[#0F2A43] outline-none"
-                />
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder={t.note}
-                  rows={3}
-                  className="w-full rounded-xl border border-white/10 bg-white/90 px-4 py-3 text-sm text-[#0F2A43] outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between text-lg font-bold">
-              <span>{t.total}</span>
-              <span>€{total.toFixed(2)}</span>
-            </div>
-
-            <button
-              onClick={sendOrder}
-              disabled={cart.length === 0}
-              className="mt-4 w-full rounded-2xl bg-[#25D366] px-4 py-3 text-base font-bold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {t.send}
-            </button>
-
-            <div className="mt-3 text-center text-xs text-white/70">WhatsApp: +49 176 72105595</div>
-          </div>
-        </div>
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>Door2Door</h1>
+        <p id="subtitle">Shop-style ordering in Regensburg</p>
+      </div>
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+        <button class="lang-btn" onclick="setLang('DE')">DE</button>
+        <button class="lang-btn" onclick="setLang('AR')">AR</button>
       </div>
     </div>
-  );
-}
+
+    <div class="layout">
+      <div class="card">
+        <h2 class="section-title" id="catTitle">Categories</h2>
+        <div id="categories"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title" id="prodTitle">Products</h2>
+        <div class="products-grid" id="products"></div>
+      </div>
+
+      <div class="card cart-area">
+        <h2 class="section-title" id="cartTitle">Cart</h2>
+        <div id="cartItems"></div>
+
+        <input id="customerName" placeholder="Your name" />
+        <input id="customerAddress" placeholder="Your address" />
+        <textarea id="customerNote" placeholder="Note"></textarea>
+
+        <div class="total-row">
+          <span id="totalLabel">Total</span>
+          <span id="totalValue">€0.00</span>
+        </div>
+
+        <button class="send-btn" id="sendBtn" onclick="sendOrder()" disabled>
+          Send order via WhatsApp
+        </button>
+
+        <div class="cart-muted">WhatsApp: +49 176 72105595</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const phone = "4917672105595";
+
+    const products = [
+      { id: 1, category: "Arabic Stores", nameEN: "Arabic Bread", nameDE: "Arabisches Brot", nameAR: "خبز عربي", price: 2.50, emoji: "🥖" },
+      { id: 2, category: "Arabic Stores", nameEN: "Labneh", nameDE: "Labneh", nameAR: "لبنة", price: 3.20, emoji: "🥛" },
+      { id: 3, category: "Supermarkets", nameEN: "Rice", nameDE: "Reis", nameAR: "رز", price: 4.00, emoji: "🍚" },
+      { id: 4, category: "Supermarkets", nameEN: "Tomatoes", nameDE: "Tomaten", nameAR: "بندورة", price: 2.20, emoji: "🍅" },
+      { id: 5, category: "Restaurants", nameEN: "Chicken Shawarma", nameDE: "Hähnchen Shawarma", nameAR: "شاورما دجاج", price: 8.50, emoji: "🌯" },
+      { id: 6, category: "Restaurants", nameEN: "Falafel Box", nameDE: "Falafel Box", nameAR: "علبة فلافل", price: 6.90, emoji: "🧆" },
+      { id: 7, category: "Any Shop", nameEN: "Orange Juice", nameDE: "Orangensaft", nameAR: "عصير برتقال", price: 2.80, emoji: "🧃" },
+      { id: 8, category: "Any Shop", nameEN: "Chocolate", nameDE: "Schokolade", nameAR: "شوكولا", price: 1.90, emoji: "🍫" }
+    ];
+
+    const categories = ["All", "Arabic Stores", "Supermarkets", "Restaurants", "Any Shop"];
+
+    let currentLang = "EN";
+    let currentCategory = "All";
+    let cart = [];
+
+    const labels = {
+      EN: {
+        subtitle: "Shop-style ordering in Regensburg",
+        categories: "Categories",
+        products: "Products",
+        cart: "Cart",
+        total: "Total",
+        send: "Send order via WhatsApp",
+        empty: "Your cart is empty",
+        add: "Add",
+        name: "Your name",
+        address: "Your address",
+        note: "Note",
+        all: "All",
+        catMap: {
+          "Arabic Stores": "Arabic Stores",
+          "Supermarkets": "Supermarkets",
+          "Restaurants": "Restaurants",
+          "Any Shop": "Any Shop"
+        }
+      },
+      DE: {
+        subtitle: "Bestellung im Shop-Stil in Regensburg",
+        categories: "Kategorien",
+        products: "Produkte",
+        cart: "Warenkorb",
+        total: "Gesamt",
+        send: "Per WhatsApp bestellen",
+        empty: "Ihr Warenkorb ist leer",
+        add: "Hinzufügen",
+        name: "Ihr Name",
+        address: "Ihre Adresse",
+        note: "Hinweis",
+        all: "Alle",
+        catMap: {
+          "Arabic Stores": "Arabische Läden",
+          "Supermarkets": "Supermärkte",
+          "Restaurants": "Restaurants",
+          "Any Shop": "Jeder Laden"
+        }
+      },
+      AR: {
+        subtitle: "طلب بأسلوب متجر في ريغنسبورغ",
+        categories: "الأقسام",
+        products: "المنتجات",
+        cart: "السلة",
+        total: "المجموع",
+        send: "إرسال الطلب عبر واتساب",
+        empty: "السلة فارغة",
+        add: "إضافة",
+        name: "الاسم",
+        address: "العنوان",
+        note: "ملاحظة",
+        all: "الكل",
+        catMap: {
+          "Arabic Stores": "محلات عربية",
+          "Supermarkets": "سوبرماركت",
+          "Restaurants": "مطاعم",
+          "Any Shop": "أي محل"
+        }
+      }
+    };
+
+    function getProductName(p) {
+      if (currentLang === "AR") return p.nameAR;
+      if (currentLang === "DE") return p.nameDE;
+      return p.nameEN;
+    }
+
+    function getCategoryLabel(cat) {
+      if (cat === "All") return labels[currentLang].all;
+      return labels[currentLang].catMap[cat];
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.remove("active"));
+      const btns = document.querySelectorAll(".lang-btn");
+      if (lang === "EN") btns[0].classList.add("active");
+      if (lang === "DE") btns[1].classList.add("active");
+      if (lang === "AR") btns[2].classList.add("active");
+      renderAll();
+    }
+
+    function renderCategories() {
+      const box = document.getElementById("categories");
+      box.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn" + (cat === currentCategory ? " active" : "");
+        btn.textContent = getCategoryLabel(cat);
+        btn.onclick = () => {
+          currentCategory = cat;
+          renderCategories();
+          renderProducts();
+        };
+        box.appendChild(btn);
+      });
+    }
+
+    function renderProducts() {
+      const box = document.getElementById("products");
+      box.innerHTML = "";
+
+      const filtered = currentCategory === "All"
+        ? products
+        : products.filter(p => p.category === currentCategory);
+
+      filtered.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <div class="emoji">${p.emoji}</div>
+          <h3>${getProductName(p)}</h3>
+          <div class="sub">${getCategoryLabel(p.category)}</div>
+          <div class="price-row">
+            <div class="price">€${p.price.toFixed(2)}</div>
+            <button class="add-btn" onclick="addToCart(${p.id})">${labels[currentLang].add}</button>
+          </div>
+        `;
+        box.appendChild(div);
+      });
+    }
+
+    function addToCart(id) {
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        const product = products.find(p => p.id === id);
+        cart.push({ ...product, qty: 1 });
+      }
+      renderCart();
+    }
+
+    function changeQty(id, delta) {
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.id !== id);
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const box = document.getElementById("cartItems");
+      const totalValue = document.getElementById("totalValue");
+      const sendBtn = document.getElementById("sendBtn");
+
+      if (cart.length === 0) {
+        box.innerHTML = `<div class="muted" style="color:rgba(255,255,255,0.8)">${labels[currentLang].empty}</div>`;
+      } else {
+        box.innerHTML = "";
+        cart.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "cart-item";
+          div.innerHTML = `
+            <div class="cart-item-top">
+              <div>
+                <div><strong>${getProductName(item)}</strong></div>
+                <small>€${item.price.toFixed(2)}</small>
+              </div>
+            </div>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+              <span>${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
+          `;
+          box.appendChild(div);
+        });
+      }
+
+      const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      totalValue.textContent = `€${total.toFixed(2)}`;
+      sendBtn.disabled = cart.length === 0;
+    }
+
+    function sendOrder() {
+      if (cart.length === 0) return;
+
+      const name = document.getElementById("customerName").value.trim();
+      const address = document.getElementById("customerAddress").value.trim();
+      const note = document.getElementById("customerNote").value.trim();
+
+      const lines = cart.map(item => {
+        return `- ${item.nameEN} / ${item.nameAR} x${item.qty} = €${(item.qty * item.price).toFixed(2)}`;
+      });
+
+      const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+      const msg =
+`New Door2Door Order
+
+Name: ${name || "-"}
+Address: ${address || "-"}
+
+Items:
+${lines.join("\n")}
+
+Total: €${total.toFixed(2)}
+Note: ${note || "-"}
+
+Regensburg only`;
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+    }
+
+    function renderTexts() {
+      document.getElementById("subtitle").textContent = labels[currentLang].subtitle;
+      document.getElementById("catTitle").textContent = labels[currentLang].categories;
+      document.getElementById("prodTitle").textContent = labels[currentLang].products;
+      document.getElementById("cartTitle").textContent = labels[currentLang].cart;
+      document.getElementById("totalLabel").textContent = labels[currentLang].total;
+      document.getElementById("sendBtn").textContent = labels[currentLang].send;
+      document.getElementById("customerName").placeholder = labels[currentLang].name;
+      document.getElementById("customerAddress").placeholder = labels[currentLang].address;
+      document.getElementById("customerNote").placeholder = labels[currentLang].note;
+    }
+
+    function renderAll() {
+      renderTexts();
+      renderCategories();
+      renderProducts();
+      renderCart();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
