@@ -1,93 +1,139 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Door2Door Delivery</title>
+export default function Door2DoorApp() {
+  const phone = "4917672105595";
 
-<style>
+  const categories = [
+    {
+      icon: "🛒",
+      title: "Supermarkets",
+      subtitle: "Netto, REWE, Edeka, Aldi",
+      message: "Hello, I want supermarket delivery in Regensburg.",
+    },
+    {
+      icon: "🥙",
+      title: "Restaurants",
+      subtitle: "Food delivery request",
+      message: "Hello, I want restaurant delivery in Regensburg.",
+    },
+    {
+      icon: "🥬",
+      title: "Arabic Stores",
+      subtitle: "Arabic groceries and essentials",
+      message: "Hello, I want Arabic store delivery in Regensburg.",
+    },
+    {
+      icon: "📦",
+      title: "Any Shop",
+      subtitle: "Any local shop in Regensburg",
+      message: "Hello, I want delivery from a local shop in Regensburg.",
+    },
+  ];
 
-body{
-font-family: Arial;
-text-align:center;
-background:#F36C21;
-color:white;
-padding:40px;
+  const quickActions = [
+    {
+      label: "Send my location",
+      icon: "📍",
+      message: "Hello, I want to send my location for a Door2Door delivery in Regensburg.",
+    },
+    {
+      label: "Ask for price",
+      icon: "💶",
+      message: "Hello, I want to ask about the delivery price in Regensburg.",
+    },
+    {
+      label: "Custom order",
+      icon: "✍️",
+      message: "Hello, I want to place a custom order with Door2Door in Regensburg.",
+    },
+  ];
+
+  const openWhatsApp = (message) => {
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f36c21] text-white">
+      <div className="mx-auto max-w-md px-4 py-6">
+        <div className="rounded-[28px] bg-white/10 p-5 shadow-2xl backdrop-blur-sm border border-white/15">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-4xl font-extrabold tracking-tight">Door2Door</div>
+              <div className="mt-1 text-sm text-white/85">Delivery in Regensburg</div>
+            </div>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl shadow-lg">
+              <span role="img" aria-label="delivery">🚚</span>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-3xl bg-white p-4 text-[#0F2A43] shadow-xl">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[#f36c21]">
+              Fast local delivery
+            </div>
+            <h1 className="mt-2 text-2xl font-bold leading-tight">
+              Order from any shop in Regensburg
+            </h1>
+            <p className="mt-2 text-sm text-slate-600">
+              Arabic stores, supermarkets, restaurants, and local shops — all through WhatsApp.
+            </p>
+            <button
+              onClick={() => openWhatsApp("Hello, I would like to place an order with Door2Door.")}
+              className="mt-4 w-full rounded-2xl bg-[#25D366] px-4 py-3 text-base font-semibold text-white shadow-lg transition hover:scale-[1.02]"
+            >
+              Order via WhatsApp
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <div className="mb-3 text-lg font-bold">Choose a category</div>
+          <div className="grid grid-cols-2 gap-3">
+            {categories.map((item) => (
+              <button
+                key={item.title}
+                onClick={() => openWhatsApp(item.message)}
+                className="rounded-3xl bg-white p-4 text-left text-[#0F2A43] shadow-xl transition hover:-translate-y-0.5"
+              >
+                <div className="text-3xl">{item.icon}</div>
+                <div className="mt-3 text-base font-bold leading-tight">{item.title}</div>
+                <div className="mt-1 text-xs text-slate-500">{item.subtitle}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <div className="mb-3 text-lg font-bold">Quick actions</div>
+          <div className="space-y-3">
+            {quickActions.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => openWhatsApp(item.message)}
+                className="flex w-full items-center justify-between rounded-2xl bg-white px-4 py-4 text-[#0F2A43] shadow-lg transition hover:translate-x-0.5"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl">{item.icon}</div>
+                  <div className="text-left">
+                    <div className="font-semibold">{item.label}</div>
+                    <div className="text-xs text-slate-500">Tap to open WhatsApp</div>
+                  </div>
+                </div>
+                <div className="text-xl text-slate-400">›</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-3xl bg-[#0F2A43] p-5 shadow-2xl">
+          <div className="text-sm uppercase tracking-[0.18em] text-white/60">Service area</div>
+          <div className="mt-2 text-2xl font-bold">Regensburg only</div>
+          <p className="mt-2 text-sm text-white/80">
+            Fast, simple, and direct ordering through WhatsApp.
+          </p>
+          <div className="mt-4 rounded-2xl bg-white/10 px-4 py-3 text-sm">
+            WhatsApp: +49 176 72105595
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-h1{
-font-size:50px;
-margin-bottom:10px;
-}
-
-h2{
-margin-top:5px;
-}
-
-p{
-font-size:18px;
-}
-
-button{
-background:white;
-color:#F36C21;
-border:none;
-padding:15px 30px;
-font-size:20px;
-border-radius:10px;
-margin-top:25px;
-cursor:pointer;
-}
-
-button:hover{
-background:#0F2A43;
-color:white;
-}
-
-.lang{
-margin-top:30px;
-font-size:16px;
-opacity:0.9;
-}
-
-</style>
-</head>
-
-<body>
-
-<h1>Door2Door</h1>
-
-<h2>Delivery in Regensburg</h2>
-
-<p>Fast delivery from any shop in Regensburg directly to your door.</p>
-
-<p>Arabic stores • Supermarkets • Restaurants • Any local shop</p>
-
-<a href="https://wa.me/4917672105595">
-<button>Order via WhatsApp</button>
-</a>
-
-<p style="margin-top:20px;">WhatsApp: +49 176 72105595</p>
-
-<div class="lang">
-
-<hr>
-
-<h3>Deutsch</h3>
-
-<p>Schnelle Lieferung aus jedem Geschäft in Regensburg direkt zu Ihrer Tür.</p>
-
-<p>Arabische Geschäfte • Supermärkte • Restaurants • Jeder lokale Laden</p>
-
-<hr>
-
-<h3>العربية</h3>
-
-<p>توصيل سريع من أي محل في ريغنسبورغ مباشرة إلى باب منزلك.</p>
-
-<p>محلات عربية • سوبرماركت • مطاعم • أي محل في المدينة</p>
-
-</div>
-
-</body>
-</html>
